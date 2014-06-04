@@ -1,0 +1,11 @@
+language: go
+
+go:
+  - 1.2.2
+  - tip
+
+install:
+  - go get "github.com/daviddengcn/go-colortext"
+
+scrpit:
+  - go test
