@@ -1,0 +1,86 @@
+name: goae
+version: 0.0.7
+inherits: wercker/ubuntu12.04-webessentials@0.0.3
+type : main
+platform : ubuntu@12.04
+description : golang
+keywords:
+  - golang
+  - appengine
+  - go
+packages :
+  - go_appengine@1.9.1
+  - git
+  - mercurial
+  - bzr
+  - unzip
+script : |
+  sudo apt-get update
+  sudo apt-get install bzr
+  sudo apt-get install mercurial
+  sudo apt-get install unzip
+  wget https://commondatastorage.googleapis.com/appengine-sdks/featured/go_appengine_sdk_linux_amd64-1.9.3.zip
+  sudo unzip -d /usr/local go_appengine_sdk_linux_amd64-1.9.3.zip
+  sudo sh -c "find /usr/local/go_appengine -perm /u+r | xargs chmod a+r"
+  sudo sh -c "find /usr/local/go_appengine -perm /u+x | xargs chmod a+x"
+  rm go_appengine_sdk_linux_amd64-1.9.3.zip
+
+  goversion=1.2.2
+  wget http://go.googlecode.com/files/go${goversion}.linux-amd64.tar.gz
+  sudo tar -C /usr/local -xzf go${goversion}.linux-amd64.tar.gz
+  rm go${goversion}.linux-amd64.tar.gz
+
+  echo "export PATH=$PATH:/usr/local/go/bin:/usr/local/go_appengine" | sudo tee -a /etc/profile
+
+  ls -l /usr/local
+  ls -l /usr/local/go_appengine
+
+  # Set GOPATH
+  export GOPATH="$HOME/go"
+  echo 'export GOPATH="$HOME/go"' | sudo tee -a /etc/profile
+
+  # Adds go bin directory to path so tools
+  # and buils are available on the commandline
+  export PATH="$PATH:$GOPATH/bin"
+  echo 'export PATH="$PATH:$GOPATH/bin"' | sudo tee -a /etc/profile
+
+  # Make actual go workspace dir structure
+  mkdir -p "$HOME/go/{src,pkg,bin}"
+
+box-detect:
+  priority : 900
+  version :
+  detect:
+    - files:
+      - .godir
+
+default-build:
+  python:
+    priority : 50
+    detect:
+      - default: true
+    text-to-append: |
+      # Build definition
+      build:
+        # The steps that will be executed on build
+        steps:
+          - script:
+              name: setup golang
+              code: |-
+                if test "${WERCKER_GIT_REPOSITORY+set}" == set; then mkdir -p "$GOPATH/src/$WERCKER_GIT_REPOSITORY"; else ln -s $WERCKER_SOURCE_DIR $GOPATH/src; fi
+                if test "${WERCKER_GIT_REPOSITORY+set}" == set; then cp -R $WERCKER_SOURCE_DIR/* "$GOPATH/src/$WERCKER_GIT_REPOSITORY"; fi
+                if test "${WERCKER_GIT_REPOSITORY+set}" == set; then export WERCKER_SOURCE_DIR="$GOPATH/src/$WERCKER_GIT_REPOSITORY"; fi
+          - script:
+              name: goapp get
+              code: |
+                cd $WERCKER_SOURCE_DIR
+                goapp version
+                goapp get ./...
+          - script:
+              name: goapp build
+              code: |
+                goapp build
+          - script:
+              name: goapp test
+              code: |
+                goapp test ./...
