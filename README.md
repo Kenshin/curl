@@ -9,6 +9,10 @@ Importing
 ---
 `go get github.com/Kenshin/curl`
 
+Usage
+---
+`import "github.com/Kenshin/curl"`
+
 Example
 ---
 See <https://github.com/Kenshin/curl/blob/master/curl_test.go>
