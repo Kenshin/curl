@@ -1,39 +1,25 @@
-name: goae
-version: 0.0.7
+name: golang
+version: 1.0.0
 inherits: wercker/ubuntu12.04-webessentials@0.0.3
 type : main
 platform : ubuntu@12.04
 description : golang
 keywords:
   - golang
-  - appengine
   - go
 packages :
-  - go_appengine@1.9.1
+  - golang@1.2.2
   - git
   - mercurial
   - bzr
-  - unzip
 script : |
   sudo apt-get update
   sudo apt-get install bzr
   sudo apt-get install mercurial
-  sudo apt-get install unzip
-  wget https://commondatastorage.googleapis.com/appengine-sdks/featured/go_appengine_sdk_linux_amd64-1.9.3.zip
-  sudo unzip -d /usr/local go_appengine_sdk_linux_amd64-1.9.3.zip
-  sudo sh -c "find /usr/local/go_appengine -perm /u+r | xargs chmod a+r"
-  sudo sh -c "find /usr/local/go_appengine -perm /u+x | xargs chmod a+x"
-  rm go_appengine_sdk_linux_amd64-1.9.3.zip
-
-  goversion=1.2.2
-  wget http://go.googlecode.com/files/go${goversion}.linux-amd64.tar.gz
-  sudo tar -C /usr/local -xzf go${goversion}.linux-amd64.tar.gz
-  rm go${goversion}.linux-amd64.tar.gz
-
-  echo "export PATH=$PATH:/usr/local/go/bin:/usr/local/go_appengine" | sudo tee -a /etc/profile
-
-  ls -l /usr/local
-  ls -l /usr/local/go_appengine
+  wget https://go.googlecode.com/files/go1.2.linux-amd64.tar.gz
+  sudo tar -C /usr/local -xzf go1.2.linux-amd64.tar.gz
+  echo "export PATH=$PATH:/usr/local/go/bin" | sudo tee -a /etc/profile
+  rm go1.2.linux-amd64.tar.gz
 
   # Set GOPATH
   export GOPATH="$HOME/go"
@@ -71,16 +57,16 @@ default-build:
                 if test "${WERCKER_GIT_REPOSITORY+set}" == set; then cp -R $WERCKER_SOURCE_DIR/* "$GOPATH/src/$WERCKER_GIT_REPOSITORY"; fi
                 if test "${WERCKER_GIT_REPOSITORY+set}" == set; then export WERCKER_SOURCE_DIR="$GOPATH/src/$WERCKER_GIT_REPOSITORY"; fi
           - script:
-              name: goapp get
+              name: go get
               code: |
                 cd $WERCKER_SOURCE_DIR
-                goapp version
-                goapp get ./...
+                go version
+                go get ./...
           - script:
-              name: goapp build
+              name: go build
               code: |
-                goapp build
+                go build
           - script:
-              name: goapp test
+              name: go test
               code: |
-                goapp test ./...
+                go test ./...
