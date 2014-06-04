@@ -30,7 +30,7 @@ func TestCurl(t *testing.T) {
 	}
 
 	// download
-	code = New("http://dist.u.qiniudn.com/latest/node.exe", "node.exe", os.TempDir() + os.PathSeparator + "node.exe")
+	code = New("http://dist.u.qiniudn.com/latest/node.exe", "node.exe", os.TempDir() + "/" + "node.exe")
 	fmt.Printf("curl.New return code is %v\n", code)
 
 }
