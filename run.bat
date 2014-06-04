@@ -1,6 +1,6 @@
 ::===========================================================
-:: CPrint: ANSI coloured text to the standard output by Golang
-:: HOST  : https://github.com/kenshin/cprint
+:: Curl  : Simple http download and readline lib by Golang
+:: HOST  : https://github.com/kenshin/curl
 :: Author: Kenshin <kenshin@ksria.com>
 ::===========================================================
 
