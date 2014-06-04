@@ -11,7 +11,7 @@ Importing
 
 Example
 ---
-See <http://github.com/kenshin/curl/curl_test.go>
+See <https://github.com/Kenshin/curl/blob/master/curl_test.go>
 
 Screenshots
 --
