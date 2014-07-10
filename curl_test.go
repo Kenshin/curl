@@ -20,7 +20,7 @@ func TestCurl(t *testing.T) {
 
 	// parse callback
 	processFunc := func(content string, line int) bool {
-		//fmt.Printf("line is %v, content is %v", line, content)
+		fmt.Printf("line is %v, content is %v", line, content)
 		return false
 	}
 
