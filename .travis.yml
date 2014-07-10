@@ -2,6 +2,8 @@ language: go
 
 go:
   - 1.2.2
+  - 1.3
+  - tip
 
 scrpit:
   - go test

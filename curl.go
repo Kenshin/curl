@@ -160,7 +160,7 @@ func New(url, name, dst string) int {
 		}
 
 		//error
-		if err != nil {
+		if err != nil && err.Error() != "EOF" {
 			panic(err)
 		}
 

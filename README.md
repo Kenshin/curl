@@ -29,6 +29,9 @@ Help
 
 CHANGELOG
 ---
+* **2014-07-10, Version `0.0.2` support:**
+    * Adapter Go 1.3
+
 * **2014-05-28, Version `0.0.1` support:**
     * New
     * Get
