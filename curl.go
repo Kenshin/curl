@@ -18,6 +18,11 @@ import (
 // Line by line to obtain content and line num
 type processFunc func(content string, line int) bool
 
+func progressbar(i int) {
+	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
+	fmt.Printf("\r%.0f%%[%s]", float32(i)/50*100, h)
+}
+
 // Get url method
 //
 //  url e.g. http://nodejs.org/dist/v0.10.0/node.exe
@@ -143,7 +148,7 @@ func New(url, name, dst string) int {
 		return -4
 	}
 
-	fmt.Printf("Start download [%v] from %v.\n%v", name, url, "1% ")
+	fmt.Printf("Start download [%v] from %v.\n%v", name, url)
 
 	// loop buff to file
 	buf := make([]byte, res.ContentLength)
@@ -164,8 +169,7 @@ func New(url, name, dst string) int {
 
 		m = m + float32(n)
 		i := int(m / float32(res.ContentLength) * 50)
-		h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
-		fmt.Printf("\r%.0f%%[%s]", float32(i)/50*100, h)
+		progressbar(i)
 
 		file.WriteString(string(buf[:n]))
 	}
