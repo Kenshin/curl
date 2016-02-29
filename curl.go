@@ -1,9 +1,7 @@
 /*
-Curl is Simple http download and readline lib by Golang. Vesion 0.0.1
-
+Curl is Simple http download and readline lib by Golang. Vesion 0.0.2
 Website https://github.com/kenshin/curl
-
-Copyright (c) 2014 Kenshin Wang <kenshin@ksria.com>
+Copyright (c) 2014-2016 Kenshin Wang <kenshin@ksria.com>
 */
 package curl
 
@@ -13,11 +11,17 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 // Read line use callback Process
 // Line by line to obtain content and line num
 type processFunc func(content string, line int) bool
+
+func progressbar(i int) {
+	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
+	fmt.Printf("\r%.0f%%[%s]", float32(i)/50*100, h)
+}
 
 // Get url method
 //
@@ -144,18 +148,17 @@ func New(url, name, dst string) int {
 		return -4
 	}
 
-	fmt.Printf("Start download [%v] from %v.\n%v", name, url, "1% ")
+	fmt.Printf("Start download [%v] from %v.\n%v", name, url)
 
 	// loop buff to file
 	buf := make([]byte, res.ContentLength)
 	var m float32
-	isShow, oldCurrent := false, 0
 	for {
 		n, err := res.Body.Read(buf)
 
 		// write complete
 		if n == 0 && err.Error() == "EOF" {
-			fmt.Println("100% \nEnd download.")
+			fmt.Println("\nEnd download.")
 			break
 		}
 
@@ -165,45 +168,8 @@ func New(url, name, dst string) int {
 		}
 
 		m = m + float32(n)
-		current := int(m / float32(res.ContentLength) * 100)
-
-		switch {
-		case current > 0 && current < 6:
-			current = 5
-		case current > 5 && current < 11:
-			current = 10
-		case current > 10 && current < 21:
-			current = 20
-		case current > 20 && current < 31:
-			current = 30
-		case current > 30 && current < 41:
-			current = 40
-		case current > 40 && current < 51:
-			current = 50
-		case current > 60 && current < 71:
-			current = 60
-		case current > 70 && current < 81:
-			current = 70
-		case current > 80 && current < 91:
-			current = 80
-		case current > 90 && current < 101:
-			current = 90
-		}
-
-		if current > oldCurrent {
-			switch current {
-			case 5, 10, 20, 30, 40, 50, 60, 70, 80, 90:
-				isShow = true
-			}
-
-			if isShow {
-				fmt.Printf("%d%v", current, "% ")
-			}
-
-			isShow = false
-		}
-
-		oldCurrent = current
+		i := int(m / float32(res.ContentLength) * 50)
+		progressbar(i)
 
 		file.WriteString(string(buf[:n]))
 	}

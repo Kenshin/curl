@@ -10,7 +10,7 @@ import (
 func TestCurl(t *testing.T) {
 
 	// curl.Get
-	code, res, _ := Get("http://dist.u.qiniudn.com/latest/SHASUMS.txt")
+	code, res, _ := Get("http://npm.taobao.org/mirrors/node/latest/SHASUMS256.txt")
 	if code != 0 {
 		return
 	}
@@ -30,7 +30,7 @@ func TestCurl(t *testing.T) {
 	}
 
 	// download
-	code = New("http://dist.u.qiniudn.com/latest/node.exe", "node.exe", os.TempDir()+"/"+"node.exe")
+	code = New("http://npm.taobao.org/mirrors/node/latest/node.exe", "node.exe", os.TempDir()+"/"+"node.exe")
 	fmt.Printf("curl.New return code is %v\n", code)
 
 }
