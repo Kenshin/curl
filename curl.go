@@ -160,8 +160,7 @@ func New(args ...interface{}) int {
 
 	for i := 0; i < count; i++ {
 		go func(dl Download, num int) {
-			urls := dl[num]
-			code = download(urls.url, urls.name, urls.dst)
+			code = download(dl[num].url, dl[num].name, dl[num].dst)
 			wg.Done()
 		}(dl, i)
 	}
