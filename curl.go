@@ -12,12 +12,15 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
 // Read line use callback Process
 // Line by line to obtain content and line num
 type processFunc func(content string, line int) bool
+
+var wg sync.WaitGroup
 
 // Get url method
 //
@@ -124,6 +127,11 @@ func New(url, name, dst string) int {
 		}
 	}()
 
+	code := download(url, name, dst)
+	return code
+}
+
+func download(url, name, dst string) int {
 	// get url
 	code, res, err := Get(url)
 	if code != 0 {
@@ -172,7 +180,6 @@ func New(url, name, dst string) int {
 			return -3
 		}
 	}
-
 	return 0
 }
 
