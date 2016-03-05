@@ -19,12 +19,6 @@ import (
 // Line by line to obtain content and line num
 type processFunc func(content string, line int) bool
 
-func progressbar(name string, start time.Time, i int) {
-	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
-	d := time.Now().Sub(start)
-	fmt.Printf("\r"+name+": "+"%.0f%% [%s] %v", float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
-}
-
 // Get url method
 //
 //  url e.g. http://nodejs.org/dist/v0.10.0/node.exe
@@ -135,8 +129,6 @@ func New(url, name, dst string) int {
 	if code != 0 {
 		return code
 	}
-
-	// close
 	defer res.Body.Close()
 
 	// create file
@@ -152,31 +144,24 @@ func New(url, name, dst string) int {
 		return -4
 	}
 
+	// Start download
 	fmt.Printf("Start download [%v] from %v.\n%v", name, url)
-
 	start := time.Now()
-	// loop buff to file
 	buf := make([]byte, res.ContentLength)
 	var m float32
 	for {
 		n, err := res.Body.Read(buf)
-
-		// write complete
 		if n == 0 && err.Error() == "EOF" {
 			fmt.Println("\nEnd download.")
 			break
 		}
-
-		//error
 		if err != nil && err.Error() != "EOF" {
 			panic(err)
 		}
-
 		m = m + float32(n)
 		i := int(m / float32(res.ContentLength) * 50)
-		progressbar(name, start, i)
-
 		file.WriteString(string(buf[:n]))
+		progressbar(name, start, i)
 	}
 
 	// valid download exe
@@ -189,4 +174,13 @@ func New(url, name, dst string) int {
 	}
 
 	return 0
+}
+
+/*
+ name: 70% [==============>__________________] 925ms
+*/
+func progressbar(name string, start time.Time, i int) {
+	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
+	d := time.Now().Sub(start)
+	fmt.Printf("\r"+name+": "+"%.0f%% [%s] %v", float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
 }
