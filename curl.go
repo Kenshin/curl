@@ -144,11 +144,19 @@ func New(args ...interface{}) int {
 	if len(args) == 3 {
 		count = 1
 		dl[count-1] = detail{args[0].(string), args[1].(string), args[2].(string)}
+	} else if len(args) == 1 {
+		if v, ok := args[0].(Download); !ok {
+			fmt.Errorf("error")
+			return -1
+		} else {
+			dl = v
+		}
+		count = len(dl)
 	}
 
 	wg.Add(count)
 
-	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("name"), ","))
+	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("name"), ", "))
 
 	for i := 0; i < count; i++ {
 		go func(dl Download, num int) {
