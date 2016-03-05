@@ -118,20 +118,22 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 //  End download.
 //
 func New(args ...interface{}) int {
+	var (
+		url, name, dst string
+		code           int
+	)
 
-	code := 0
-	var url, name, dst string
 	if len(args) == 3 {
 		url, name, dst = args[0].(string), args[1].(string), args[2].(string)
 	}
 
-	// try catch
 	defer func() {
 		if err := recover(); err != nil {
 			msg := fmt.Sprintf("CURL Error: Download %v from %v an error has occurred. \nError: %v", name, url, err)
 			panic(msg)
 		}
 	}()
+
 	code = download(url, name, dst)
 	return code
 }
