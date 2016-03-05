@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"reflect"
 	"strings"
 	"sync"
 	"time"
@@ -20,6 +21,23 @@ import (
 // Line by line to obtain content and line num
 type processFunc func(content string, line int) bool
 
+type detail struct {
+	url  string
+	name string
+	dst  string
+}
+type Download map[int]detail
+
+func (dl Download) GetValues(key string) []string {
+	var arr []string
+	for i := 0; i < len(dl); i++ {
+		v := reflect.ValueOf(dl[i]).FieldByName(key)
+		arr = append(arr, v.String())
+	}
+	return arr
+}
+
+// sync
 var wg sync.WaitGroup
 
 // Get url method
@@ -119,14 +137,34 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 //
 func New(args ...interface{}) int {
 	var (
-		url, name, dst string
-		code           int
+		code, count int      = 0, 0
+		dl          Download = make(Download)
 	)
 
 	if len(args) == 3 {
-		url, name, dst = args[0].(string), args[1].(string), args[2].(string)
+		count = 1
+		dl[count-1] = detail{args[0].(string), args[1].(string), args[2].(string)}
 	}
 
+	wg.Add(count)
+
+	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("name"), ","))
+
+	for i := 0; i < count; i++ {
+		go func(dl Download, num int) {
+			urls := dl[num]
+			code = download(urls.url, urls.name, urls.dst)
+			wg.Done()
+		}(dl, i)
+	}
+
+	wg.Wait()
+	fmt.Println("\nEnd download.")
+
+	return code
+}
+
+func download(url, name, dst string) int {
 	defer func() {
 		if err := recover(); err != nil {
 			msg := fmt.Sprintf("CURL Error: Download %v from %v an error has occurred. \nError: %v", name, url, err)
@@ -134,14 +172,6 @@ func New(args ...interface{}) int {
 		}
 	}()
 
-	fmt.Printf("Start download [%v] from %v.\n%v", name, url)
-	code = download(url, name, dst)
-	fmt.Println("\nEnd download.")
-
-	return code
-}
-
-func download(url, name, dst string) int {
 	// get url
 	code, res, err := Get(url)
 	if code != 0 {
