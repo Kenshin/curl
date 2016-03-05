@@ -134,7 +134,10 @@ func New(args ...interface{}) int {
 		}
 	}()
 
+	fmt.Printf("Start download [%v] from %v.\n%v", name, url)
 	code = download(url, name, dst)
+	fmt.Println("\nEnd download.")
+
 	return code
 }
 
@@ -160,15 +163,12 @@ func download(url, name, dst string) int {
 		return -4
 	}
 
-	// Start download
-	fmt.Printf("Start download [%v] from %v.\n%v", name, url)
 	start := time.Now()
 	buf := make([]byte, res.ContentLength)
 	var m float32
 	for {
 		n, err := res.Body.Read(buf)
 		if n == 0 && err.Error() == "EOF" {
-			fmt.Println("\nEnd download.")
 			break
 		}
 		if err != nil && err.Error() != "EOF" {
