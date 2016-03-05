@@ -117,7 +117,13 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 //  node.exe: 70% [==============>__________________] 925ms
 //  End download.
 //
-func New(url, name, dst string) int {
+func New(args ...interface{}) int {
+
+	code := 0
+	var url, name, dst string
+	if len(args) == 3 {
+		url, name, dst = args[0].(string), args[1].(string), args[2].(string)
+	}
 
 	// try catch
 	defer func() {
@@ -126,8 +132,7 @@ func New(url, name, dst string) int {
 			panic(msg)
 		}
 	}()
-
-	code := download(url, name, dst)
+	code = download(url, name, dst)
 	return code
 }
 
@@ -147,6 +152,7 @@ func download(url, name, dst string) int {
 	}
 	defer file.Close()
 
+	// verify content length
 	if res.ContentLength == -1 {
 		fmt.Printf("Download %v fail from %v.\n", name, url)
 		return -4
