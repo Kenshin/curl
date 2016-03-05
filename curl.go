@@ -12,15 +12,17 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 // Read line use callback Process
 // Line by line to obtain content and line num
 type processFunc func(content string, line int) bool
 
-func progressbar(i int) {
+func progressbar(name string, start time.Time, i int) {
 	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
-	fmt.Printf("\r%.0f%%[%s]", float32(i)/50*100, h)
+	d := time.Now().Sub(start)
+	fmt.Printf("\r"+name+": "+"%.0f%% [%s] %v", float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
 }
 
 // Get url method
@@ -112,10 +114,12 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 // For example:
 //  curl.New("http://nodejs.org/dist/", "0.10.28", "v0.10.28")
 //
-//  Console show
+//  Console show:
+//
 //  Start download [0.10.28] from http://nodejs.org/dist/.
-//  1% 5% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+//  node.exe: 70% [==============>__________________] 925ms
 //  End download.
+//
 func New(url, name, dst string) int {
 
 	// try catch
@@ -150,6 +154,7 @@ func New(url, name, dst string) int {
 
 	fmt.Printf("Start download [%v] from %v.\n%v", name, url)
 
+	start := time.Now()
 	// loop buff to file
 	buf := make([]byte, res.ContentLength)
 	var m float32
@@ -169,7 +174,7 @@ func New(url, name, dst string) int {
 
 		m = m + float32(n)
 		i := int(m / float32(res.ContentLength) * 50)
-		progressbar(i)
+		progressbar(name, start, i)
 
 		file.WriteString(string(buf[:n]))
 	}
