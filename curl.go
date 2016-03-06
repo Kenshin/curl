@@ -160,7 +160,8 @@ func New(args ...interface{}) int {
 
 	for i := 0; i < count; i++ {
 		go func(dl Download, num int) {
-			code = download(dl[num].url, dl[num].name, dl[num].dst)
+			progressbar(dl[num].name, time.Now(), 0, "\n")
+			code = download(dl[num].url, dl[num].name, dl[num].dst, num)
 			wg.Done()
 		}(dl, i)
 	}
@@ -171,7 +172,7 @@ func New(args ...interface{}) int {
 	return code
 }
 
-func download(url, name, dst string) int {
+func download(url, name, dst string, count int) int {
 	defer func() {
 		if err := recover(); err != nil {
 			msg := fmt.Sprintf("CURL Error: Download %v from %v an error has occurred. \nError: %v", name, url, err)
@@ -214,7 +215,7 @@ func download(url, name, dst string) int {
 		m = m + float32(n)
 		i := int(m / float32(res.ContentLength) * 50)
 		file.WriteString(string(buf[:n]))
-		progressbar(name, start, i)
+		progressbar(name, start, i, "")
 	}
 
 	// valid download exe
@@ -231,8 +232,8 @@ func download(url, name, dst string) int {
 /*
  name: 70% [==============>__________________] 925ms
 */
-func progressbar(name string, start time.Time, i int) {
+func progressbar(name string, start time.Time, i int, suffix string) {
 	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
 	d := time.Now().Sub(start)
-	fmt.Printf("\r"+name+": "+"%.0f%% [%s] %v", float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
+	fmt.Printf("\r"+name+": "+"%.0f%% [%s] %v"+suffix, float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
 }
