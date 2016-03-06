@@ -17,16 +17,20 @@ import (
 	"time"
 )
 
+const ESC = "\033["
+
+var curLine int = -1
+
 // Read line use callback Process
 // Line by line to obtain content and line num
 type processFunc func(content string, line int) bool
 
-type detail struct {
-	url  string
-	name string
-	dst  string
+type Detail struct {
+	Url  string
+	Name string
+	Dst  string
 }
-type Download map[int]detail
+type Download map[int]Detail
 
 func (dl Download) GetValues(key string) []string {
 	var arr []string
@@ -143,7 +147,7 @@ func New(args ...interface{}) int {
 
 	if len(args) == 3 {
 		count = 1
-		dl[count-1] = detail{args[0].(string), args[1].(string), args[2].(string)}
+		dl[count-1] = Detail{args[0].(string), args[1].(string), args[2].(string)}
 	} else if len(args) == 1 {
 		if v, ok := args[0].(Download); !ok {
 			fmt.Errorf("error")
@@ -156,12 +160,12 @@ func New(args ...interface{}) int {
 
 	wg.Add(count)
 
-	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("name"), ", "))
+	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("Name"), ", "))
 
 	for i := 0; i < count; i++ {
+		progressbar(dl[i].Name, time.Now(), 0, "\n")
 		go func(dl Download, num int) {
-			progressbar(dl[num].name, time.Now(), 0, "\n")
-			code = download(dl[num].url, dl[num].name, dl[num].dst, num)
+			code = download(dl[num].Url, dl[num].Name, dl[num].Dst, num, count)
 			wg.Done()
 		}(dl, i)
 	}
@@ -172,7 +176,7 @@ func New(args ...interface{}) int {
 	return code
 }
 
-func download(url, name, dst string, count int) int {
+func download(url, name, dst string, line, max int) int {
 	defer func() {
 		if err := recover(); err != nil {
 			msg := fmt.Sprintf("CURL Error: Download %v from %v an error has occurred. \nError: %v", name, url, err)
@@ -215,6 +219,8 @@ func download(url, name, dst string, count int) int {
 		m = m + float32(n)
 		i := int(m / float32(res.ContentLength) * 50)
 		file.WriteString(string(buf[:n]))
+
+		curStack(line, max)
 		progressbar(name, start, i, "")
 	}
 
@@ -236,4 +242,25 @@ func progressbar(name string, start time.Time, i int, suffix string) {
 	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
 	d := time.Now().Sub(start)
 	fmt.Printf("\r"+name+": "+"%.0f%% [%s] %v"+suffix, float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
+}
+
+func curStack(line, max int) {
+	if curLine == -1 {
+		curUp(max - line)
+	} else {
+		if line < curLine {
+			curUp(line - curLine)
+		} else if line > curLine {
+			curDown(curLine - line)
+		}
+	}
+	curLine = line
+}
+
+func curUp(i int) {
+	fmt.Printf(ESC+"%dA", i)
+}
+
+func curDown(i int) {
+	fmt.Printf(ESC+"%dB", i)
 }
