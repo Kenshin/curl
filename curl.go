@@ -209,7 +209,6 @@ func download(url, name, dst string, line, max int) int {
 	buf := make([]byte, res.ContentLength)
 	var m float32
 	for {
-		time.Sleep(time.Millisecond * 500)
 		n, err := res.Body.Read(buf)
 		if n == 0 && err.Error() == "EOF" {
 			break
@@ -221,8 +220,10 @@ func download(url, name, dst string, line, max int) int {
 		i := int(m / float32(res.ContentLength) * 50)
 		file.WriteString(string(buf[:n]))
 
-		curStack(line, max)
-		progressbar(name, start, i, "")
+		func(name string, start time.Time, i, line, max int) {
+			curStack(line, max)
+			progressbar(name, start, i, "")
+		}(name, start, i, line, max)
 	}
 
 	// valid download exe
