@@ -20,6 +20,7 @@ import (
 const ESC = "\033["
 
 var curLine int = -1
+var mutex *sync.RWMutex = new(sync.RWMutex)
 
 // Read line use callback Process
 // Line by line to obtain content and line num
@@ -247,6 +248,7 @@ func progressbar(name string, start time.Time, i int, suffix string) {
 }
 
 func curStack(line, max int) {
+	mutex.Lock()
 	switch {
 	case curLine == -1:
 		curUp(max - line)
@@ -258,6 +260,7 @@ func curStack(line, max int) {
 	if curLine != line {
 		curLine = line
 	}
+	mutex.Unlock()
 }
 
 func curUp(i int) {
