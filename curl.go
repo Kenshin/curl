@@ -209,6 +209,7 @@ func download(url, name, dst string, line, max int) int {
 	buf := make([]byte, res.ContentLength)
 	var m float32
 	for {
+		time.Sleep(time.Millisecond * 500)
 		n, err := res.Body.Read(buf)
 		if n == 0 && err.Error() == "EOF" {
 			break
@@ -245,16 +246,17 @@ func progressbar(name string, start time.Time, i int, suffix string) {
 }
 
 func curStack(line, max int) {
-	if curLine == -1 {
+	switch {
+	case curLine == -1:
 		curUp(max - line)
-	} else {
-		if line < curLine {
-			curUp(line - curLine)
-		} else if line > curLine {
-			curDown(curLine - line)
-		}
+	case line < curLine:
+		curUp(line - curLine)
+	case line > curLine:
+		curDown(curLine - line)
 	}
-	curLine = line
+	if curLine != line {
+		curLine = line
+	}
 }
 
 func curUp(i int) {
