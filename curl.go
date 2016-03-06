@@ -214,8 +214,7 @@ func download(url, name, dst string) int {
 		m = m + float32(n)
 		i := int(m / float32(res.ContentLength) * 50)
 		file.WriteString(string(buf[:n]))
-		msg := progressbar(name, start, i)
-		fmt.Printf("\r" + msg)
+		progressbar(name, start, i)
 	}
 
 	// valid download exe
@@ -232,11 +231,8 @@ func download(url, name, dst string) int {
 /*
  name: 70% [==============>__________________] 925ms
 */
-func progressbar(name string, start time.Time, i int) string {
-	n := name + ": "
-	p := fmt.Sprintf("%.0f", float32(i)/50*100) + "%%"
-	h := "[" + strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i) + "]"
-	s := time.Duration(time.Now().Sub(start).Seconds()) * time.Second
-	return fmt.Sprintf("%v %v %v %v", n, p, h, s)
-	//fmt.Printf("\r"+name+": "+"%.0f%% [%s] %v", float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
+func progressbar(name string, start time.Time, i int) {
+	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
+	d := time.Now().Sub(start)
+	fmt.Printf("\r"+name+": "+"%.0f%% [%s] %v", float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
 }
