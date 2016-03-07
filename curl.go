@@ -172,7 +172,8 @@ func New(args ...interface{}) int {
 	}
 
 	wg.Wait()
-	fmt.Println("\nEnd download.")
+	curDown(count - curLine)
+	fmt.Println("\rEnd download.")
 
 	return code
 }
