@@ -152,7 +152,7 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 //  -4: content length = -1.
 //  -5: panic error.
 //  -6: curl.New() parameter type error.
-//  -7: curl.New() parameter type error.
+//  -7: Download size error.
 //
 // For example:
 //  curl.New("http://nodejs.org/dist/", "0.10.28", "v0.10.28")
