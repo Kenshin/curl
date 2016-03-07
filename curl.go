@@ -43,11 +43,15 @@ type Detail struct {
 	Dst  string
 }
 
-type Download map[int]Detail
+type Download []Detail
 
 // Read line use callback Process
 // Line by line to obtain content and line num
 type processFunc func(content string, line int) bool
+
+func (dl Download) Add(da Detail) Download {
+	return append(dl, da)
+}
 
 func (dl Download) GetValues(key string) []string {
 	var arr []string
@@ -159,13 +163,13 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 //
 func New(args ...interface{}) int {
 	var (
-		code, count int      = 0, 0
-		dl          Download = make(Download)
+		code, count int = 0, 0
+		dl          Download
 	)
 
 	if len(args) == 3 {
 		count = 1
-		dl[count-1] = Detail{args[0].(string), args[1].(string), args[2].(string)}
+		dl = dl.Add(Detail{args[0].(string), args[1].(string), args[2].(string)})
 	} else if len(args) == 1 {
 		if v, ok := args[0].(Download); !ok {
 			fmt.Errorf("error")
