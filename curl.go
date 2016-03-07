@@ -19,19 +19,35 @@ import (
 
 const ESC = "\033["
 
-var curLine int = -1
-var mutex *sync.RWMutex = new(sync.RWMutex)
+var (
+	curLine  int           = -1
+	mutex    *sync.RWMutex = new(sync.RWMutex)
+	errStack []errDetail   = make([]errDetail, 0)
+)
 
-// Read line use callback Process
-// Line by line to obtain content and line num
-type processFunc func(content string, line int) bool
+type errDetail struct {
+	name    string
+	code    int
+	message interface{}
+}
+
+func (err errDetail) errPrint() {
+	fmt.Printf("Name  : %v\n", err.name)
+	fmt.Printf("Code  : %v\n", err.code)
+	fmt.Printf("Error : %v", err.message)
+}
 
 type Detail struct {
 	Url  string
 	Name string
 	Dst  string
 }
+
 type Download map[int]Detail
+
+// Read line use callback Process
+// Line by line to obtain content and line num
+type processFunc func(content string, line int) bool
 
 func (dl Download) GetValues(key string) []string {
 	var arr []string
@@ -130,6 +146,7 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 //  -2: create file error
 //  -3: download node.exe error
 //  -4: content length = -1
+//  -5: panic error
 //
 // For example:
 //  curl.New("http://nodejs.org/dist/", "0.10.28", "v0.10.28")
@@ -173,7 +190,11 @@ func New(args ...interface{}) int {
 
 	wg.Wait()
 	curDown(count - curLine)
-	fmt.Println("\rEnd download.")
+	for _, v := range errStack {
+		fmt.Println("\r-------- Error Message detail --------")
+		v.errPrint()
+	}
+	fmt.Println("\r\n--------\nEnd download.")
 
 	return code
 }
@@ -181,8 +202,10 @@ func New(args ...interface{}) int {
 func download(url, name, dst string, line, max int) int {
 	defer func() {
 		if err := recover(); err != nil {
-			msg := fmt.Sprintf("CURL Error: Download %v from %v an error has occurred. \nError: %v", name, url, err)
-			panic(msg)
+			errStack = append(errStack, errDetail{name, -5, err})
+			curStack(line, max)
+			empty := strings.Repeat(" ", 100)
+			fmt.Printf("\r%v download error.%v", name, empty)
 		}
 	}()
 
