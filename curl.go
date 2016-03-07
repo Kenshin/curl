@@ -221,7 +221,8 @@ func download(url, name, dst string, line, max int) int {
 
 	// get url
 	code, res, err := Get(url)
-	if code != 0 {
+	if code == -1 {
+		panic(curlError{name, -1, "curl.Get() error, Error: " + err.Error()})
 		return code
 	}
 	defer res.Body.Close()
