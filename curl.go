@@ -176,10 +176,9 @@ func New(args ...interface{}) int {
 		count = len(dl)
 	}
 
-	wg.Add(count)
-
 	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("Name"), ", "))
 
+	wg.Add(count)
 	for i := 0; i < count; i++ {
 		progressbar(dl[i].Name, time.Now(), 0, "\n")
 		go func(dl Download, num int) {
@@ -187,8 +186,8 @@ func New(args ...interface{}) int {
 			wg.Done()
 		}(dl, i)
 	}
-
 	wg.Wait()
+
 	curDown(count - curLine)
 	for _, v := range errStack {
 		fmt.Println("\r-------- Error Message detail --------")
