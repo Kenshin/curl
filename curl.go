@@ -205,13 +205,15 @@ func New(args ...interface{}) int {
 	return code
 }
 
-func download(url, name, dst string, line, max int) int {
+func download(url, name, dst string, line, max int) (code int) {
 	defer func() {
 		if err := recover(); err != nil {
 			if v, ok := err.(curlError); ok {
 				errStack = append(errStack, v)
+				code = v.code
 			} else {
 				errStack = append(errStack, curlError{name, -5, err})
+				code = -5
 			}
 			curStack(line, max)
 			empty := strings.Repeat(" ", 100)
@@ -220,10 +222,10 @@ func download(url, name, dst string, line, max int) int {
 	}()
 
 	// get url
-	code, res, err := Get(url)
+	newCode, res, err := Get(url)
+	code = newCode
 	if code == -1 {
 		panic(curlError{name, -1, "curl.Get() error, Error: " + err.Error()})
-		return code
 	}
 	defer res.Body.Close()
 
@@ -231,14 +233,12 @@ func download(url, name, dst string, line, max int) int {
 	file, createErr := os.Create(dst)
 	if createErr != nil {
 		panic(curlError{name, -2, "Create file error, Error: " + createErr.Error()})
-		return -2
 	}
 	defer file.Close()
 
 	// verify content length
 	if res.ContentLength == -1 {
 		panic(curlError{name, -4, "Download content length is -1."})
-		return -4
 	}
 
 	start := time.Now()
@@ -251,7 +251,6 @@ func download(url, name, dst string, line, max int) int {
 		}
 		if err != nil && err.Error() != "EOF" {
 			panic(curlError{name, -7, "Download size error, Error: ." + err.Error()})
-			return -7
 		}
 		m = m + float32(n)
 		i := int(m / float32(res.ContentLength) * 50)
@@ -268,10 +267,11 @@ func download(url, name, dst string, line, max int) int {
 	if err == nil {
 		if fi.Size() != res.ContentLength {
 			panic(curlError{name, -3, "Downlaod size verify error, please check your network."})
-			return -3
+			//return -3
 		}
 	}
-	return 0
+	code = 0
+	return
 }
 
 /*
