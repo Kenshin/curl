@@ -42,6 +42,7 @@ type Detail struct {
 	Url  string
 	Name string
 	Dst  string
+	Code int
 }
 
 type Download []Detail
@@ -169,7 +170,7 @@ func New(args ...interface{}) int {
 
 	if len(args) == 3 {
 		count = 1
-		dl = dl.Add(Detail{args[0].(string), args[1].(string), args[2].(string)})
+		dl = dl.Add(Detail{args[0].(string), args[1].(string), args[2].(string), 0})
 	} else if len(args) == 1 {
 		if v, ok := args[0].(Download); !ok {
 			return -6
@@ -187,7 +188,7 @@ func New(args ...interface{}) int {
 	for i := 0; i < count; i++ {
 		progressbar(dl[i].Name, time.Now(), 0, "\n")
 		go func(dl Download, num int) {
-			code = download(dl[num].Url, dl[num].Name, dl[num].Dst, num, count)
+			download(&dl[num], num, count)
 			wg.Done()
 		}(dl, i)
 	}
@@ -203,15 +204,16 @@ func New(args ...interface{}) int {
 	return code
 }
 
-func download(url, name, dst string, line, max int) (code int) {
+func download(da *Detail, line, max int) {
+	url, name, dst := da.Url, da.Name, da.Dst
 	defer func() {
 		if err := recover(); err != nil {
 			if v, ok := err.(curlError); ok {
 				errStack = append(errStack, v)
-				code = v.code
+				da.Code = v.code
 			} else {
 				errStack = append(errStack, curlError{name, -5, err})
-				code = -5
+				da.Code = -5
 			}
 			curStack(line, max)
 			empty := strings.Repeat(" ", 100)
@@ -220,8 +222,7 @@ func download(url, name, dst string, line, max int) (code int) {
 	}()
 
 	// get url
-	newCode, res, err := Get(url)
-	code = newCode
+	code, res, err := Get(url)
 	if code == -1 {
 		panic(curlError{name, -1, "curl.Get() error, Error: " + err.Error()})
 	}
@@ -267,7 +268,6 @@ func download(url, name, dst string, line, max int) (code int) {
 			panic(curlError{name, -3, "Downlaod size verify error, please check your network."})
 		}
 	}
-	return
 }
 
 /*
