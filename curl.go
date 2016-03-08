@@ -162,10 +162,10 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 //  node.exe: 70% [==============>__________________] 925ms
 //  End download.
 //
-func New(args ...interface{}) int {
+func New(args ...interface{}) (Download, []curlError) {
 	var (
-		code, count int = 0, 0
-		dl          Download
+		count int = 0
+		dl    Download
 	)
 
 	if len(args) == 3 {
@@ -173,13 +173,13 @@ func New(args ...interface{}) int {
 		dl = dl.Add(Detail{args[0].(string), args[1].(string), args[2].(string), 0})
 	} else if len(args) == 1 {
 		if v, ok := args[0].(Download); !ok {
-			return -6
+			//return -6
 		} else {
 			dl = v
 			count = len(dl)
 		}
 	} else {
-		return -6
+		//return -6
 	}
 
 	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("Name"), ", "))
@@ -201,7 +201,7 @@ func New(args ...interface{}) int {
 	}
 	fmt.Println("\r\n--------\nEnd download.")
 
-	return code
+	return dl, errStack
 }
 
 func download(da *Detail, line, max int) {
