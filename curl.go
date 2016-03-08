@@ -267,7 +267,6 @@ func download(url, name, dst string, line, max int) (code int) {
 			panic(curlError{name, -3, "Downlaod size verify error, please check your network."})
 		}
 	}
-	code = 0
 	return
 }
 
