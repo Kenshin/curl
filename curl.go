@@ -265,7 +265,6 @@ func download(url, name, dst string, line, max int) (code int) {
 	if err == nil {
 		if fi.Size() != res.ContentLength {
 			panic(curlError{name, -3, "Downlaod size verify error, please check your network."})
-			//return -3
 		}
 	}
 	code = 0
