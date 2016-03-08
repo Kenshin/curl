@@ -20,6 +20,7 @@ import (
 const ESC = "\033["
 
 var (
+	wg       sync.WaitGroup
 	curLine  int           = -1
 	mutex    *sync.RWMutex = new(sync.RWMutex)
 	errStack []curlError   = make([]curlError, 0)
@@ -61,9 +62,6 @@ func (dl Download) GetValues(key string) []string {
 	}
 	return arr
 }
-
-// sync
-var wg sync.WaitGroup
 
 // Get url method
 //
