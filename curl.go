@@ -160,7 +160,16 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
         name: download file name e.g. node.exe
         dst : download path
     multi download model:
-        Download struct
+    Download struct
+
+   Return code:
+     0: success
+    -2: create file error.
+    -3: download node.exe size error.
+    -4: content length = -1.
+    -5: panic error.
+    -6: curl.New() parameter type error.
+    -7: Download size error.
 
    Return:
     dl( Download struct )
