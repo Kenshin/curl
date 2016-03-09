@@ -20,9 +20,10 @@ import (
 const esc = "\033["
 
 var (
-	wg      sync.WaitGroup
-	curLine int           = -1
-	mutex   *sync.RWMutex = new(sync.RWMutex)
+	wg         sync.WaitGroup
+	curLine    int = -1
+	maxNameLen int
+	mutex      *sync.RWMutex = new(sync.RWMutex)
 )
 
 // Curl Error struct
@@ -188,11 +189,12 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
     newDL, err := New(dl)
 
    Console show:
-    Start download [aaa, bbb, node, npm].
+    Start download [aaa, bbb, node, npm, ccccccc].
          aaa: 70% [==============>__________________] 925ms
          bbb: 10% [===>_____________________________] 2s
         node: 100% [===============================>] 10s
-         npm: download error.
+        npm: download error.
+    cccc...: 30% [=========>________________________] 2s
     End download.
 */
 func New(args ...interface{}) (dl Download, errStack []CurlError) {
@@ -223,6 +225,7 @@ func New(args ...interface{}) (dl Download, errStack []CurlError) {
 	}
 
 	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("Name"), ", "))
+	maxNameLen = maxNameLength(dl.GetValues("Name"))
 
 	wg.Add(count)
 	for i := 0; i < count; i++ {
@@ -306,11 +309,34 @@ func download(ts *Task, line, max int, errStack *[]CurlError) {
 	}
 }
 
+func maxNameLength(names []string) int {
+	max := 0
+	for _, v := range names {
+		if len(v) > max {
+			max = len(v)
+		}
+	}
+	if max > 15 {
+		max = 15
+	}
+	return max
+}
+
 func safeDst(dst string) string {
 	if !strings.HasSuffix(dst, "/") {
 		dst += "/"
 	}
 	return dst
+}
+
+func safeName(name string) string {
+	h := ""
+	if len(name) > 15 {
+		name = name[:12] + "..."
+	} else if len(name) <= maxNameLen {
+		h = strings.Repeat(" ", maxNameLen-len(name))
+	}
+	return h + name + ":"
 }
 
 /*
@@ -319,7 +345,7 @@ func safeDst(dst string) string {
 func progressbar(name string, start time.Time, i int, suffix string) {
 	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
 	d := time.Now().Sub(start)
-	fmt.Printf("\r"+name+": "+"%.0f%% [%s] %v"+suffix, float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
+	fmt.Printf("\r%v %.0f%% [%s] %v"+suffix, safeName(name), float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
 }
 
 func curStack(line, max int) {
