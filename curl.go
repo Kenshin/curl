@@ -45,6 +45,11 @@ type Task struct {
 	Code int
 }
 
+func (ts Task) New(url, name, dst string) Task {
+	ts.Url, ts.Name, ts.Dst = url, name, dst
+	return ts
+}
+
 type Download struct {
 	tasks []Task
 }
@@ -53,8 +58,8 @@ type Download struct {
 // Line by line to obtain content and line num
 type processFunc func(content string, line int) bool
 
-func (dl *Download) AddTask(da Task) {
-	dl.tasks = append(dl.tasks, da)
+func (dl *Download) AddTask(ts Task) {
+	dl.tasks = append(dl.tasks, ts)
 }
 
 func (dl Download) GetValues(key string) []string {
@@ -206,16 +211,16 @@ func New(args ...interface{}) (Download, []curlError) {
 	return dl, errStack
 }
 
-func download(da *Task, line, max int) {
-	url, name, dst := da.Url, da.Name, da.Dst
+func download(ts *Task, line, max int) {
+	url, name, dst := ts.Url, ts.Name, ts.Dst
 	defer func() {
 		if err := recover(); err != nil {
 			if v, ok := err.(curlError); ok {
 				errStack = append(errStack, v)
-				da.Code = v.code
+				ts.Code = v.code
 			} else {
 				errStack = append(errStack, curlError{name, -5, err})
-				da.Code = -5
+				ts.Code = -5
 			}
 			curStack(line, max)
 			empty := strings.Repeat(" ", 100)
