@@ -241,7 +241,7 @@ func New(args ...interface{}) (dl Download, errStack []CurlError) {
 }
 
 func download(ts *Task, line, max int, errStack *[]CurlError) {
-	url, name, dst := ts.Url, ts.Name, ts.Dst
+	url, name, dst := ts.Url, ts.Name, safeDst(ts.Dst)
 	defer func() {
 		if err := recover(); err != nil {
 			if v, ok := err.(CurlError); ok {
@@ -265,7 +265,7 @@ func download(ts *Task, line, max int, errStack *[]CurlError) {
 	defer res.Body.Close()
 
 	// create file
-	file, createErr := os.Create(dst)
+	file, createErr := os.Create(dst + name)
 	if createErr != nil {
 		panic(CurlError{name, -2, "Create file error, Error: " + createErr.Error()})
 	}
@@ -304,6 +304,13 @@ func download(ts *Task, line, max int, errStack *[]CurlError) {
 			panic(CurlError{name, -3, "Downlaod size verify error, please check your network."})
 		}
 	}
+}
+
+func safeDst(dst string) string {
+	if !strings.HasSuffix(dst, "/") {
+		dst += "/"
+	}
+	return dst
 }
 
 /*
