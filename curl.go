@@ -201,6 +201,9 @@ func New(args ...interface{}) (Download, []curlError) {
 	}
 	wg.Wait()
 
+	curDown(count - curLine)
+	fmt.Println("\r--------\nEnd download.")
+
 	return dl, errStack
 }
 
