@@ -201,13 +201,6 @@ func New(args ...interface{}) (Download, []curlError) {
 	}
 	wg.Wait()
 
-	curDown(count - curLine)
-	for _, v := range errStack {
-		fmt.Println("\n-------- Error Message detail --------")
-		v.Error()
-	}
-	fmt.Println("\r\n--------\nEnd download.")
-
 	return dl, errStack
 }
 
