@@ -197,6 +197,7 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 */
 func New(args ...interface{}) (dl Download, errStack []CurlError) {
 	var count int = 0
+	curLine = -1
 	defer func() {
 		if err := recover(); err != nil {
 			if v, ok := err.(CurlError); ok {
