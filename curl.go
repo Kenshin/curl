@@ -11,16 +11,64 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"reflect"
 	"strings"
+	"sync"
+	"time"
 )
+
+const ESC = "\033["
+
+var (
+	wg       sync.WaitGroup
+	curLine  int           = -1
+	mutex    *sync.RWMutex = new(sync.RWMutex)
+	errStack []curlError   = make([]curlError, 0)
+)
+
+type curlError struct {
+	name    string
+	code    int
+	message interface{}
+}
+
+func (err curlError) Error() {
+	fmt.Printf("Name  : %v\n", err.name)
+	fmt.Printf("Code  : %v\n", err.code)
+	fmt.Printf("Error : %v", err.message)
+}
+
+type Task struct {
+	Url  string
+	Name string
+	Dst  string
+	Code int
+}
+
+func (ts Task) New(url, name, dst string) Task {
+	ts.Url, ts.Name, ts.Dst = url, name, dst
+	return ts
+}
+
+type Download struct {
+	tasks []Task
+}
 
 // Read line use callback Process
 // Line by line to obtain content and line num
 type processFunc func(content string, line int) bool
 
-func progressbar(i int) {
-	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
-	fmt.Printf("\r%.0f%%[%s]", float32(i)/50*100, h)
+func (dl *Download) AddTask(ts Task) {
+	dl.tasks = append(dl.tasks, ts)
+}
+
+func (dl Download) GetValues(key string) []string {
+	var arr []string
+	for i := 0; i < len(dl.tasks); i++ {
+		v := reflect.ValueOf(dl.tasks[i]).FieldByName(key)
+		arr = append(arr, v.String())
+	}
+	return arr
 }
 
 // Get url method
@@ -105,83 +153,155 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 //
 // Return code
 //   0: success
-//  -2: create file error
-//  -3: download node.exe error
-//  -4: content length = -1
+//  -2: create file error.
+//  -3: download node.exe size error.
+//  -4: content length = -1.
+//  -5: panic error.
+//  -6: curl.New() parameter type error.
+//  -7: Download size error.
 //
 // For example:
 //  curl.New("http://nodejs.org/dist/", "0.10.28", "v0.10.28")
 //
-//  Console show
+//  Console show:
+//
 //  Start download [0.10.28] from http://nodejs.org/dist/.
-//  1% 5% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+//  node.exe: 70% [==============>__________________] 925ms
 //  End download.
-func New(url, name, dst string) int {
+//
+func New(args ...interface{}) (Download, []curlError) {
+	var (
+		count int = 0
+		dl    Download
+	)
 
-	// try catch
+	if len(args) == 3 {
+		count = 1
+		dl.AddTask(Task{args[0].(string), args[1].(string), args[2].(string), 0})
+	} else if len(args) == 1 {
+		if v, ok := args[0].(Download); !ok {
+			//return -6
+		} else {
+			dl = v
+			count = len(dl.tasks)
+		}
+	} else {
+		//return -6
+	}
+
+	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("Name"), ", "))
+
+	wg.Add(count)
+	for i := 0; i < count; i++ {
+		progressbar(dl.tasks[i].Name, time.Now(), 0, "\n")
+		go func(dl Download, num int) {
+			download(&dl.tasks[num], num, count)
+			wg.Done()
+		}(dl, i)
+	}
+	wg.Wait()
+
+	curDown(count - curLine)
+	fmt.Println("\r--------\nEnd download.")
+
+	return dl, errStack
+}
+
+func download(ts *Task, line, max int) {
+	url, name, dst := ts.Url, ts.Name, ts.Dst
 	defer func() {
 		if err := recover(); err != nil {
-			msg := fmt.Sprintf("CURL Error: Download %v from %v an error has occurred. \nError: %v", name, url, err)
-			panic(msg)
+			if v, ok := err.(curlError); ok {
+				errStack = append(errStack, v)
+				ts.Code = v.code
+			} else {
+				errStack = append(errStack, curlError{name, -5, err})
+				ts.Code = -5
+			}
+			curStack(line, max)
+			empty := strings.Repeat(" ", 100)
+			fmt.Printf("\r%v download error.%v", name, empty)
 		}
 	}()
 
 	// get url
 	code, res, err := Get(url)
-	if code != 0 {
-		return code
+	if code == -1 {
+		panic(curlError{name, -1, "curl.Get() error, Error: " + err.Error()})
 	}
-
-	// close
 	defer res.Body.Close()
 
 	// create file
 	file, createErr := os.Create(dst)
 	if createErr != nil {
-		fmt.Println("Create file error, Error: " + createErr.Error())
-		return -2
+		panic(curlError{name, -2, "Create file error, Error: " + createErr.Error()})
 	}
 	defer file.Close()
 
+	// verify content length
 	if res.ContentLength == -1 {
-		fmt.Printf("Download %v fail from %v.\n", name, url)
-		return -4
+		panic(curlError{name, -4, "Download content length is -1."})
 	}
 
-	fmt.Printf("Start download [%v] from %v.\n%v", name, url)
-
-	// loop buff to file
+	start := time.Now()
 	buf := make([]byte, res.ContentLength)
 	var m float32
 	for {
 		n, err := res.Body.Read(buf)
-
-		// write complete
 		if n == 0 && err.Error() == "EOF" {
-			fmt.Println("\nEnd download.")
 			break
 		}
-
-		//error
 		if err != nil && err.Error() != "EOF" {
-			panic(err)
+			panic(curlError{name, -7, "Download size error, Error: ." + err.Error()})
 		}
-
 		m = m + float32(n)
 		i := int(m / float32(res.ContentLength) * 50)
-		progressbar(i)
-
 		file.WriteString(string(buf[:n]))
+
+		func(name string, start time.Time, i, line, max int) {
+			curStack(line, max)
+			progressbar(name, start, i, "")
+		}(name, start, i, line, max)
 	}
 
 	// valid download exe
 	fi, err := file.Stat()
 	if err == nil {
 		if fi.Size() != res.ContentLength {
-			fmt.Printf("Error: Downlaod [%v] size error, please check your network.\n", name)
-			return -3
+			panic(curlError{name, -3, "Downlaod size verify error, please check your network."})
 		}
 	}
+}
 
-	return 0
+/*
+ name: 70% [==============>__________________] 925ms
+*/
+func progressbar(name string, start time.Time, i int, suffix string) {
+	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
+	d := time.Now().Sub(start)
+	fmt.Printf("\r"+name+": "+"%.0f%% [%s] %v"+suffix, float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
+}
+
+func curStack(line, max int) {
+	mutex.Lock()
+	switch {
+	case curLine == -1:
+		curUp(max - line)
+	case line < curLine:
+		curUp(line - curLine)
+	case line > curLine:
+		curDown(curLine - line)
+	}
+	if curLine != line {
+		curLine = line
+	}
+	mutex.Unlock()
+}
+
+func curUp(i int) {
+	fmt.Printf(ESC+"%dA", i)
+}
+
+func curDown(i int) {
+	fmt.Printf(ESC+"%dB", i)
 }
