@@ -20,21 +20,20 @@ import (
 const esc = "\033["
 
 var (
-	wg       sync.WaitGroup
-	curLine  int           = -1
-	mutex    *sync.RWMutex = new(sync.RWMutex)
-	errStack []curlError   = make([]curlError, 0)
+	wg      sync.WaitGroup
+	curLine int           = -1
+	mutex   *sync.RWMutex = new(sync.RWMutex)
 )
 
 // Curl Error struct
-type curlError struct {
+type CurlError struct {
 	name    string      // Task struct Name
 	code    int         // Task struct Code
 	message interface{} // Error message
 }
 
 // Print Error
-func (err curlError) Error() {
+func (err CurlError) Error() {
 	fmt.Printf("Name  : %v\n", err.name)
 	fmt.Printf("Code  : %v\n", err.code)
 	fmt.Printf("Error : %v", err.message)
@@ -173,7 +172,7 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 
    Return:
     dl( Download struct )
-    err( curlError struct)
+    err( []CurlError array)
 
    For example:
 
@@ -196,24 +195,30 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
          npm: download error.
     End download.
 */
-func New(args ...interface{}) (Download, []curlError) {
-	var (
-		count int = 0
-		dl    Download
-	)
+func New(args ...interface{}) (dl Download, errStack []CurlError) {
+	var count int = 0
+	defer func() {
+		if err := recover(); err != nil {
+			if v, ok := err.(CurlError); ok {
+				errStack = append(errStack, v)
+			} else {
+				errStack = append(errStack, CurlError{"curl.New()", -5, err})
+			}
+		}
+	}()
 
 	if len(args) == 3 {
 		count = 1
 		dl.AddTask(Task{args[0].(string), args[1].(string), args[2].(string), 0})
 	} else if len(args) == 1 {
 		if v, ok := args[0].(Download); !ok {
-			//return -6
+			panic(CurlError{"curl.New()", -6, "curl.New() parameter type error."})
 		} else {
 			dl = v
 			count = len(dl.tasks)
 		}
 	} else {
-		//return -6
+		panic(CurlError{"curl.New()", -6, "curl.New() parameter type error."})
 	}
 
 	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("Name"), ", "))
@@ -222,7 +227,7 @@ func New(args ...interface{}) (Download, []curlError) {
 	for i := 0; i < count; i++ {
 		progressbar(dl.tasks[i].Name, time.Now(), 0, "\n")
 		go func(dl Download, num int) {
-			download(&dl.tasks[num], num, count)
+			download(&dl.tasks[num], num, count, &errStack)
 			wg.Done()
 		}(dl, i)
 	}
@@ -231,18 +236,18 @@ func New(args ...interface{}) (Download, []curlError) {
 	curDown(count - curLine)
 	fmt.Println("\r--------\nEnd download.")
 
-	return dl, errStack
+	return
 }
 
-func download(ts *Task, line, max int) {
+func download(ts *Task, line, max int, errStack *[]CurlError) {
 	url, name, dst := ts.Url, ts.Name, ts.Dst
 	defer func() {
 		if err := recover(); err != nil {
-			if v, ok := err.(curlError); ok {
-				errStack = append(errStack, v)
+			if v, ok := err.(CurlError); ok {
+				*errStack = append(*errStack, v)
 				ts.Code = v.code
 			} else {
-				errStack = append(errStack, curlError{name, -5, err})
+				*errStack = append(*errStack, CurlError{name, -5, err})
 				ts.Code = -5
 			}
 			curStack(line, max)
@@ -254,20 +259,20 @@ func download(ts *Task, line, max int) {
 	// get url
 	code, res, err := Get(url)
 	if code == -1 {
-		panic(curlError{name, -1, "curl.Get() error, Error: " + err.Error()})
+		panic(CurlError{name, -1, "curl.Get() error, Error: " + err.Error()})
 	}
 	defer res.Body.Close()
 
 	// create file
 	file, createErr := os.Create(dst)
 	if createErr != nil {
-		panic(curlError{name, -2, "Create file error, Error: " + createErr.Error()})
+		panic(CurlError{name, -2, "Create file error, Error: " + createErr.Error()})
 	}
 	defer file.Close()
 
 	// verify content length
 	if res.ContentLength == -1 {
-		panic(curlError{name, -4, "Download content length is -1."})
+		panic(CurlError{name, -4, "Download content length is -1."})
 	}
 
 	start := time.Now()
@@ -279,7 +284,7 @@ func download(ts *Task, line, max int) {
 			break
 		}
 		if err != nil && err.Error() != "EOF" {
-			panic(curlError{name, -7, "Download size error, Error: ." + err.Error()})
+			panic(CurlError{name, -7, "Download size error, Error: ." + err.Error()})
 		}
 		m = m + float32(n)
 		i := int(m / float32(res.ContentLength) * 50)
@@ -295,7 +300,7 @@ func download(ts *Task, line, max int) {
 	fi, err := file.Stat()
 	if err == nil {
 		if fi.Size() != res.ContentLength {
-			panic(curlError{name, -3, "Downlaod size verify error, please check your network."})
+			panic(CurlError{name, -3, "Downlaod size verify error, please check your network."})
 		}
 	}
 }
