@@ -1,5 +1,5 @@
 /*
-Curl is Simple http download and readline lib by Golang. Vesion 0.0.2
+Curl is Simple http download and readline lib by Golang. Vesion 0.0.4
 Website https://github.com/kenshin/curl
 Copyright (c) 2014-2016 Kenshin Wang <kenshin@ksria.com>
 */
@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-const ESC = "\033["
+const esc = "\033["
 
 var (
 	wg       sync.WaitGroup
@@ -26,18 +26,21 @@ var (
 	errStack []curlError   = make([]curlError, 0)
 )
 
+// Curl Error struct
 type curlError struct {
-	name    string
-	code    int
-	message interface{}
+	name    string      // Task struct Name
+	code    int         // Task struct Code
+	message interface{} // Error message
 }
 
+// Print Error
 func (err curlError) Error() {
 	fmt.Printf("Name  : %v\n", err.name)
 	fmt.Printf("Code  : %v\n", err.code)
 	fmt.Printf("Error : %v", err.message)
 }
 
+// Task struct
 type Task struct {
 	Url  string
 	Name string
@@ -45,6 +48,8 @@ type Task struct {
 	Code int
 }
 
+// Receive url, name and dst
+// Retruns New Task
 func (ts Task) New(url, name, dst string) Task {
 	ts.Url, ts.Name, ts.Dst = url, name, dst
 	return ts
@@ -54,14 +59,12 @@ type Download struct {
 	tasks []Task
 }
 
-// Read line use callback Process
-// Line by line to obtain content and line num
-type processFunc func(content string, line int) bool
-
+// Append Download task arrray
 func (dl *Download) AddTask(ts Task) {
 	dl.tasks = append(dl.tasks, ts)
 }
 
+// Get Download struct values by key
 func (dl Download) GetValues(key string) []string {
 	var arr []string
 	for i := 0; i < len(dl.tasks); i++ {
@@ -70,6 +73,10 @@ func (dl Download) GetValues(key string) []string {
 	}
 	return arr
 }
+
+// Read line use callback Process
+// Line by line to obtain content and line num
+type processFunc func(content string, line int) bool
 
 // Get url method
 //
@@ -144,31 +151,42 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 	return err
 }
 
-// Download method
-//
-// Parameter
-//  url : download url e.g. http://nodejs.org/dist/v0.10.0/node.exe
-//  name: download file name e.g. node.exe
-//  dst : download path
-//
-// Return code
-//   0: success
-//  -2: create file error.
-//  -3: download node.exe size error.
-//  -4: content length = -1.
-//  -5: panic error.
-//  -6: curl.New() parameter type error.
-//  -7: Download size error.
-//
-// For example:
-//  curl.New("http://nodejs.org/dist/", "0.10.28", "v0.10.28")
-//
-//  Console show:
-//
-//  Start download [0.10.28] from http://nodejs.org/dist/.
-//  node.exe: 70% [==============>__________________] 925ms
-//  End download.
-//
+/*
+   Download method
+
+   Parameter:
+    simple download model:
+        url : download url e.g. http://nodejs.org/dist/v0.10.0/node.exe
+        name: download file name e.g. node.exe
+        dst : download path
+    multi download model:
+        Download struct
+
+   Return:
+    dl( Download struct )
+    err( curlError struct)
+
+   For example:
+
+    // simple download
+    dl, err := curl.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "node.exe", os.TempDir()+"/"+"node.exe")
+
+    // multi download
+    dl := curl.Download{}
+    ts := new(curl.Task)
+    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "node.exe", os.TempDir()+"/"+"node.exe"))
+    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node3.exe", os.TempDir()+"/"+"node3.exe"))
+    dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()+"/"+"ChromeSetup.zip"))
+    newDL, err := New(dl)
+
+   Console show:
+    Start download [aaa, bbb, node, npm].
+         aaa: 70% [==============>__________________] 925ms
+         bbb: 10% [===>_____________________________] 2s
+        node: 100% [===============================>] 10s
+         npm: download error.
+    End download.
+*/
 func New(args ...interface{}) (Download, []curlError) {
 	var (
 		count int = 0
@@ -299,9 +317,9 @@ func curStack(line, max int) {
 }
 
 func curUp(i int) {
-	fmt.Printf(ESC+"%dA", i)
+	fmt.Printf(esc+"%dA", i)
 }
 
 func curDown(i int) {
-	fmt.Printf(ESC+"%dB", i)
+	fmt.Printf(esc+"%dB", i)
 }
