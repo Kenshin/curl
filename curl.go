@@ -45,20 +45,22 @@ type Detail struct {
 	Code int
 }
 
-type Download []Detail
+type Download struct {
+	tasks []Detail
+}
 
 // Read line use callback Process
 // Line by line to obtain content and line num
 type processFunc func(content string, line int) bool
 
-func (dl Download) Add(da Detail) Download {
-	return append(dl, da)
+func (dl *Download) AddTask(da Detail) {
+	dl.tasks = append(dl.tasks, da)
 }
 
 func (dl Download) GetValues(key string) []string {
 	var arr []string
-	for i := 0; i < len(dl); i++ {
-		v := reflect.ValueOf(dl[i]).FieldByName(key)
+	for i := 0; i < len(dl.tasks); i++ {
+		v := reflect.ValueOf(dl.tasks[i]).FieldByName(key)
 		arr = append(arr, v.String())
 	}
 	return arr
@@ -170,13 +172,13 @@ func New(args ...interface{}) (Download, []curlError) {
 
 	if len(args) == 3 {
 		count = 1
-		dl = dl.Add(Detail{args[0].(string), args[1].(string), args[2].(string), 0})
+		dl.AddTask(Detail{args[0].(string), args[1].(string), args[2].(string), 0})
 	} else if len(args) == 1 {
 		if v, ok := args[0].(Download); !ok {
 			//return -6
 		} else {
 			dl = v
-			count = len(dl)
+			count = len(dl.tasks)
 		}
 	} else {
 		//return -6
@@ -186,9 +188,9 @@ func New(args ...interface{}) (Download, []curlError) {
 
 	wg.Add(count)
 	for i := 0; i < count; i++ {
-		progressbar(dl[i].Name, time.Now(), 0, "\n")
+		progressbar(dl.tasks[i].Name, time.Now(), 0, "\n")
 		go func(dl Download, num int) {
-			download(&dl[num], num, count)
+			download(&dl.tasks[num], num, count)
 			wg.Done()
 		}(dl, i)
 	}
