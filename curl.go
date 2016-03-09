@@ -38,7 +38,7 @@ func (err curlError) Error() {
 	fmt.Printf("Error : %v", err.message)
 }
 
-type Detail struct {
+type Task struct {
 	Url  string
 	Name string
 	Dst  string
@@ -46,14 +46,14 @@ type Detail struct {
 }
 
 type Download struct {
-	tasks []Detail
+	tasks []Task
 }
 
 // Read line use callback Process
 // Line by line to obtain content and line num
 type processFunc func(content string, line int) bool
 
-func (dl *Download) AddTask(da Detail) {
+func (dl *Download) AddTask(da Task) {
 	dl.tasks = append(dl.tasks, da)
 }
 
@@ -172,7 +172,7 @@ func New(args ...interface{}) (Download, []curlError) {
 
 	if len(args) == 3 {
 		count = 1
-		dl.AddTask(Detail{args[0].(string), args[1].(string), args[2].(string), 0})
+		dl.AddTask(Task{args[0].(string), args[1].(string), args[2].(string), 0})
 	} else if len(args) == 1 {
 		if v, ok := args[0].(Download); !ok {
 			//return -6
@@ -206,7 +206,7 @@ func New(args ...interface{}) (Download, []curlError) {
 	return dl, errStack
 }
 
-func download(da *Detail, line, max int) {
+func download(da *Task, line, max int) {
 	url, name, dst := da.Url, da.Name, da.Dst
 	defer func() {
 		if err := recover(); err != nil {
