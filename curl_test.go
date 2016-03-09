@@ -36,9 +36,10 @@ func TestCurl(t *testing.T) {
 
 	// multi download
 	dl := Download{}
-	dl.AddTask(Task{"http://npm.taobao.org/mirrors/node/latest/node.exe", "node.exe", os.TempDir() + "/" + "node.exe", 0})
-	dl.AddTask(Task{"http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node3.exe", os.TempDir() + "/" + "node3.exe", 0})
-	dl.AddTask(Task{"https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir() + "/" + "ChromeSetup.zip", 0})
+	ts := new(Task)
+	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "node.exe", os.TempDir()+"/"+"node.exe"))
+	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node3.exe", os.TempDir()+"/"+"node3.exe"))
+	dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()+"/"+"ChromeSetup.zip"))
 	//dl.AddTask(Task{"http://npm.taobao.org/mirrors/node/v5.7.1/win-x64/node.exe", "node2.exe", os.TempDir() + "/" + "node2.exe", 0})
 	//dl.AddTask(Task{"http://golangtc.com/static/go/1.6/go1.6.windows-amd64.zip", "windows-amd64.zip", os.TempDir() + "/" + "windows-amd64.zip", 0})
 
