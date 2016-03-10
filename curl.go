@@ -198,7 +198,7 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
     End download.
 */
 func New(args ...interface{}) (dl Download, errStack []CurlError) {
-	var count int = 0
+	count := parseArgs(&dl, args...)
 	curLine = -1
 	defer func() {
 		if err := recover(); err != nil {
@@ -209,20 +209,6 @@ func New(args ...interface{}) (dl Download, errStack []CurlError) {
 			}
 		}
 	}()
-
-	if len(args) == 3 {
-		count = 1
-		dl.AddTask(Task{args[0].(string), args[1].(string), args[2].(string), 0})
-	} else if len(args) == 1 {
-		if v, ok := args[0].(Download); !ok {
-			panic(CurlError{"curl.New()", -6, "curl.New() parameter type error."})
-		} else {
-			dl = v
-			count = len(dl.tasks)
-		}
-	} else {
-		panic(CurlError{"curl.New()", -6, "curl.New() parameter type error."})
-	}
 
 	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("Name"), ", "))
 	maxNameLen = maxNameLength(dl.GetValues("Name"))
@@ -241,6 +227,37 @@ func New(args ...interface{}) (dl Download, errStack []CurlError) {
 	fmt.Println("\r--------\nEnd download.")
 
 	return
+}
+
+func parseArgs(dl *Download, args ...interface{}) int {
+	if len(args) == 0 {
+		panic(CurlError{"curl.New()", -6, "curl.New() parameter type error."})
+	} else {
+		switch args[0].(type) {
+		case string:
+			url, name, dst := args[0].(string), "", ""
+			switch len(args) {
+			case 1:
+				names := strings.Split(url, "/")
+				name = names[len(names)-1:][0]
+				dst, _ = os.Getwd()
+			case 2:
+				name = args[1].(string)
+				dst, _ = os.Getwd()
+			case 3:
+				name, dst = args[1].(string), args[2].(string)
+			}
+			dl.AddTask(Task{url, name, dst, 0})
+		case Task:
+			for _, v := range args {
+				dl.AddTask(v.(Task))
+			}
+		case Download:
+			v := args[0].(Download)
+			dl = &v
+		}
+	}
+	return len(dl.tasks)
 }
 
 func download(ts *Task, line, max int, errStack *[]CurlError) {
