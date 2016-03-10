@@ -272,7 +272,7 @@ func download(ts *Task, line, max int, errStack *[]CurlError) {
 				*errStack = append(*errStack, CurlError{name, -5, err})
 				ts.Code = -5
 			}
-			curStack(line, max)
+			curMove(line, max)
 			msg := fmt.Sprintf("%v download error.", safeName(name))
 			empty := strings.Repeat(" ", 80-len(msg))
 			fmt.Printf("\r%v%v", msg, empty)
@@ -314,7 +314,7 @@ func download(ts *Task, line, max int, errStack *[]CurlError) {
 		file.WriteString(string(buf[:n]))
 
 		func(name string, start time.Time, i, line, max int) {
-			curStack(line, max)
+			curMove(line, max)
 			progressbar(name, start, i, "")
 		}(name, start, i, line, max)
 	}
@@ -369,7 +369,7 @@ func progressbar(name string, start time.Time, i int, suffix string) {
 	fmt.Printf("\r%v%v%v", s, suffix, e)
 }
 
-func curStack(line, max int) {
+func curMove(line, max int) {
 	mutex.Lock()
 	switch {
 	case curLine == -1:
