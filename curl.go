@@ -51,8 +51,12 @@ type Task struct {
 
 // Receive url, name and dst
 // Retruns New Task
-func (ts Task) New(url, name, dst string) Task {
-	ts.Url, ts.Name, ts.Dst = url, name, dst
+func (ts Task) New(args ...interface{}) Task {
+	if len(args) == 0 {
+		panic(CurlError{"curl.New()", -6, "curl.New() parameter type error."})
+	} else {
+		ts.Url, ts.Name, ts.Dst = safeArgs(args...)
+	}
 	return ts
 }
 
@@ -237,18 +241,7 @@ func parseArgs(args ...interface{}) (int, Download) {
 	} else {
 		switch args[0].(type) {
 		case string:
-			url, name, dst := args[0].(string), "", ""
-			switch len(args) {
-			case 1:
-				names := strings.Split(url, "/")
-				name = names[len(names)-1:][0]
-				dst, _ = os.Getwd()
-			case 2:
-				name = args[1].(string)
-				dst, _ = os.Getwd()
-			case 3:
-				name, dst = args[1].(string), args[2].(string)
-			}
+			url, name, dst := safeArgs(args...)
 			dl.AddTask(Task{url, name, dst, 0})
 		case Task:
 			for _, v := range args {
@@ -341,13 +334,6 @@ func maxNameLength(names []string) int {
 	return max
 }
 
-func safeDst(dst string) string {
-	if !strings.HasSuffix(dst, "/") {
-		dst += "/"
-	}
-	return dst
-}
-
 func safeName(name string) string {
 	h := ""
 	if len(name) > 15 {
@@ -356,6 +342,29 @@ func safeName(name string) string {
 		h = strings.Repeat(" ", maxNameLen-len(name))
 	}
 	return h + name + ":"
+}
+
+func safeDst(dst string) string {
+	if !strings.HasSuffix(dst, "/") {
+		dst += "/"
+	}
+	return dst
+}
+
+func safeArgs(args ...interface{}) (url, name, dst string) {
+	url = args[0].(string)
+	switch len(args) {
+	case 1:
+		names := strings.Split(url, "/")
+		name = names[len(names)-1:][0]
+		dst, _ = os.Getwd()
+	case 2:
+		name = args[1].(string)
+		dst, _ = os.Getwd()
+	case 3:
+		name, dst = args[1].(string), args[2].(string)
+	}
+	return
 }
 
 /*
