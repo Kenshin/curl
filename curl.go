@@ -24,6 +24,7 @@ var (
 	curLine    int = -1
 	maxNameLen int
 	mutex      *sync.RWMutex = new(sync.RWMutex)
+	count      int           = 0
 )
 
 // Curl Error struct
@@ -198,8 +199,8 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
     End download.
 */
 func New(args ...interface{}) (dl Download, errStack []CurlError) {
-	count := parseArgs(&dl, args...)
 	curLine = -1
+	count, dl = parseArgs(args...)
 	defer func() {
 		if err := recover(); err != nil {
 			if v, ok := err.(CurlError); ok {
@@ -229,7 +230,8 @@ func New(args ...interface{}) (dl Download, errStack []CurlError) {
 	return
 }
 
-func parseArgs(dl *Download, args ...interface{}) int {
+func parseArgs(args ...interface{}) (int, Download) {
+	dl := Download{}
 	if len(args) == 0 {
 		panic(CurlError{"curl.New()", -6, "curl.New() parameter type error."})
 	} else {
@@ -253,11 +255,10 @@ func parseArgs(dl *Download, args ...interface{}) int {
 				dl.AddTask(v.(Task))
 			}
 		case Download:
-			v := args[0].(Download)
-			dl = &v
+			dl = args[0].(Download)
 		}
 	}
-	return len(dl.tasks)
+	return len(dl.tasks), dl
 }
 
 func download(ts *Task, line, max int, errStack *[]CurlError) {
