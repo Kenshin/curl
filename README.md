@@ -3,7 +3,8 @@ Curl: Simple http download and readline lib by Golang [![Build Status](https://a
 
 Documentation
 ---
-Visit the docs on [GoDoc](http://godoc.org/github.com/Kenshin/curl)
+[![Gowalker][gowalker-badge]][gowalker-link]
+[![Godoc][godoc-badge]][godoc-link]
 
 Installation
 ---
@@ -72,11 +73,6 @@ fmt.Printf("curl.New return ld  is %v\n", newDL)
 fmt.Printf("curl.New return err is %v\n", err)
 ```
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
-
-Document
----
-[![Gowalker][gowalker-badge]][gowalker-link]
-[![Godoc][godoc-badge]][godoc-link]
 
 Help
 ---
