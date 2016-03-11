@@ -17,8 +17,6 @@ import (
 	"time"
 )
 
-const esc = "\033["
-
 var (
 	wg         sync.WaitGroup
 	curLine    int = -1
@@ -384,9 +382,9 @@ func curMove(line, max int) {
 	case curLine == -1:
 		curUp(max - line)
 	case line < curLine:
-		curUp(line - curLine)
+		curUp(curLine - line)
 	case line > curLine:
-		curDown(curLine - line)
+		curDown(line - curLine)
 	}
 	if curLine != line {
 		curLine = line
@@ -395,9 +393,9 @@ func curMove(line, max int) {
 }
 
 func curUp(i int) {
-	fmt.Printf(esc+"%dA", i)
+	fmt.Printf("\r\033[%dA", i)
 }
 
 func curDown(i int) {
-	fmt.Printf(esc+"%dB", i)
+	fmt.Printf("\r\033[%dB", i)
 }
