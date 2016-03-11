@@ -1,4 +1,4 @@
-Curl: Simple http download and readline lib by Golang [![Build Status](https://api.travis-ci.org/Kenshin/curl.svg?branch=master)](https://travis-ci.org/Kenshin/curl)
+Curl: Multiple download lib with CLI by Golang [![Build Status](https://api.travis-ci.org/Kenshin/curl.svg?branch=master)](https://travis-ci.org/Kenshin/curl)
 ================================
 
 Documentation
