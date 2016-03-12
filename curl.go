@@ -194,9 +194,9 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 
    Console show:
     Start download [aaa, bbb, node, npm, ccccccc].
-         aaa: 70% [==============>__________________] 925ms
-         bbb: 10% [===>_____________________________] 2s
-        node: 100% [===============================>] 10s
+        aaa: 70% [==============>__________________] 925ms
+        bbb: 10% [===>_____________________________] 2s
+       node: 100% [===============================>] 10s
         npm: download error.
     cccc...: 30% [=========>________________________] 2s
     End download.
