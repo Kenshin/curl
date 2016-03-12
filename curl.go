@@ -33,10 +33,11 @@ type CurlError struct {
 }
 
 // Print Error
-func (err CurlError) Error() {
-	fmt.Printf("Name  : %v\n", err.name)
-	fmt.Printf("Code  : %v\n", err.code)
-	fmt.Printf("Error : %v", err.message)
+func (err CurlError) Error() string {
+	name := fmt.Sprintf("Name  : %v\n", err.name)
+	code := fmt.Sprintf("Code  : %v\n", err.code)
+	msg := fmt.Sprintf("Error : %v", err.message)
+	return "\n" + name + code + msg
 }
 
 // Task struct
@@ -104,13 +105,13 @@ func Get(url string) (code int, res *http.Response, err error) {
 
 	// err
 	if err != nil {
-		panic(err)
+		return -5, res, CurlError{url, -5, err.Error()}
 	}
 
 	// check state code
 	if res.StatusCode != 200 {
-		fmt.Printf("URL [%v] an [%v] error occurred, please check.\n", url, res.StatusCode)
-		return -1, res, err
+		s := fmt.Sprintf("%v an [%v] error occurred.", url, res.StatusCode)
+		return -1, res, CurlError{url, -1, s}
 	}
 
 	return 0, res, err
@@ -273,7 +274,7 @@ func download(ts *Task, line, max int, errStack *[]CurlError) {
 	// get url
 	code, res, err := Get(url)
 	if code == -1 {
-		panic(CurlError{name, -1, "curl.Get() error, Error: " + err.Error()})
+		panic(err)
 	}
 	defer res.Body.Close()
 
