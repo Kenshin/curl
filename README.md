@@ -74,6 +74,12 @@ fmt.Printf("curl.New return err is %v\n", err)
 ```
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
+Support
+---
+* Mac OS
+* Linux
+* Windows ( depends on `ansi.sys`, if not please download it, and add to `environment variables` , [more about](https://en.wikipedia.org/wiki/ANSI.SYS).  )
+
 Help
 ---
 * Email: <kenshin@ksria.com>
@@ -82,15 +88,15 @@ Help
 CHANGELOG
 ---
 * **2016-03-10, Version `0.0.4` support:**
-    * Add multi download
+    * Add multi download.
     * Rework `curl.New` function.
-    * Adapter Go 1.6
+    * Adapter Go 1.6.
 
 * **2016-03-05, Version `0.0.3` support:**
     * Add beautiful dowload print.
 
 * **2014-07-10, Version `0.0.2` support:**
-    * Adapter Go 1.3
+    * Adapter Go 1.3.
 
 * **2014-05-28, Version `0.0.1` support:**
     * New
