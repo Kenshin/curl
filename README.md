@@ -78,7 +78,7 @@ Support
 ---
 * Mac OS
 * Linux
-* Windows ( depends on `ansi.sys`, if not please download it, and add to `environment variables` , [more about](https://en.wikipedia.org/wiki/ANSI.SYS).  )
+* Windows ( usage `kernel32.dll` and `SetConsoleCursorPosition` fuction )
 
 Help
 ---
