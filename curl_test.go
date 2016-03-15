@@ -59,6 +59,16 @@ func TestCurl(t *testing.T) {
 		dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "node.exe", os.TempDir()))
 		dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe", os.TempDir()))
 		dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()))
+	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "nodeeeeeeeeeeeeeeeeeeeeeeee.exe", os.TempDir()))
+	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe", os.TempDir()))
+	    dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()))
+	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x86/node.exe", "node40.exe"))
+	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.1.1/win-x86/node.exe", "node41.exe"))
+	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.4.0/win-x86/node.exe", "node42.exe"))
+	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.3.0/win-x86/node.exe", "node43.exe"))
+	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.2.0/win-x86/node.exe", "node44.exe"))
+	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.1.0/win-x86/node.exe", "node45.exe"))
+	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.0.0/win-x86/node.exe", "node46.exe"))
 		parseArgs(&dl, dl)
 	*/
 
