@@ -373,8 +373,11 @@ func progressbar(name string, start time.Time, i int, suffix string) {
 	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
 	d := time.Now().Sub(start)
 	s := fmt.Sprintf("%v %.0f%% [%s] %v", safeName(name), float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
+	if len(s) > 80 {
+		s = s[:80]
+	}
 	e := strings.Repeat(" ", 80-len(s))
-	fmt.Printf("\r%v%v%v", s, suffix, e)
+	fmt.Printf("\r%v%v%v", s, e, suffix)
 }
 
 func curMove(line, max int) {
