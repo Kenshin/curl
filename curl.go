@@ -60,20 +60,18 @@ func (ts Task) New(args ...interface{}) Task {
 	return ts
 }
 
-type Download struct {
-	tasks []Task
-}
+type Download []Task
 
 // Append Download task arrray
 func (dl *Download) AddTask(ts Task) {
-	dl.tasks = append(dl.tasks, ts)
+	*dl = append(*dl, ts)
 }
 
 // Get Download struct values by key
 func (dl Download) GetValues(key string) []string {
 	var arr []string
-	for i := 0; i < len(dl.tasks); i++ {
-		v := reflect.ValueOf(dl.tasks[i]).FieldByName(key)
+	for i := 0; i < len(dl); i++ {
+		v := reflect.ValueOf(dl[i]).FieldByName(key)
 		arr = append(arr, v.String())
 	}
 	return arr
@@ -221,9 +219,9 @@ func New(args ...interface{}) (dl Download, errStack []CurlError) {
 
 	wg.Add(count)
 	for i := 0; i < count; i++ {
-		progressbar(dl.tasks[i].Name, time.Now(), 0, "\n")
+		progressbar(dl[i].Name, time.Now(), 0, "\n")
 		go func(dl Download, num int) {
-			download(&dl.tasks[num], num, count, &errStack)
+			download(&dl[num], num, count, &errStack)
 			wg.Done()
 		}(dl, i)
 	}
@@ -252,7 +250,7 @@ func parseArgs(args ...interface{}) (int, Download) {
 			dl = args[0].(Download)
 		}
 	}
-	return len(dl.tasks), dl
+	return len(dl), dl
 }
 
 func download(ts *Task, line, max int, errStack *[]CurlError) {
