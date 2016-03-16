@@ -9,6 +9,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"reflect"
@@ -174,6 +175,7 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
     -5: panic error.
     -6: curl.New() parameter type error.
     -7: Download size error.
+    -8: Write Content-Type:text error.
 
    Return:
     dl( Download struct )
@@ -286,38 +288,59 @@ func download(ts *Task, line, max int, errStack *[]CurlError) {
 	defer file.Close()
 
 	// verify content length
-	if res.ContentLength == -1 {
+	if res.ContentLength == -1 && isBodyBytes(res.Header.Get("Content-Type")) {
 		panic(CurlError{name, -4, "Download content length is -1."})
 	}
 
 	start := time.Now()
-	buf := make([]byte, res.ContentLength)
-	var m float32
-	for {
-		n, err := res.Body.Read(buf)
-		if n == 0 && err.Error() == "EOF" {
-			break
-		}
-		if err != nil && err.Error() != "EOF" {
-			panic(CurlError{name, -7, "Download size error, Error: ." + err.Error()})
-		}
-		m = m + float32(n)
-		i := int(m / float32(res.ContentLength) * 50)
-		file.WriteString(string(buf[:n]))
+	if isBodyBytes(res.Header.Get("Content-Type")) {
+		buf := make([]byte, res.ContentLength)
+		var m float32
+		for {
+			n, err := res.Body.Read(buf)
+			if n == 0 && err.Error() == "EOF" {
+				break
+			}
+			if err != nil && err.Error() != "EOF" {
+				panic(CurlError{name, -7, "Download size error, Error: ." + err.Error()})
+			}
+			m = m + float32(n)
+			i := int(m / float32(res.ContentLength) * 50)
+			file.WriteString(string(buf[:n]))
 
-		func(name string, start time.Time, i, line, max int) {
+			func(name string, start time.Time, i, line, max int) {
+				curMove(line, max)
+				progressbar(name, start, i, "")
+			}(name, start, i, line, max)
+		}
+
+		// valid download exe
+		fi, err := file.Stat()
+		if err == nil {
+			if fi.Size() != res.ContentLength {
+				panic(CurlError{name, -3, "Downlaod size verify error, please check your network."})
+			}
+		}
+	} else {
+		if bytes, err := ioutil.ReadAll(bufio.NewReader(res.Body)); err != nil {
+			panic(CurlError{name, -8, err.Error()})
+		} else {
+			file.Write(bytes)
 			curMove(line, max)
-			progressbar(name, start, i, "")
-		}(name, start, i, line, max)
-	}
-
-	// valid download exe
-	fi, err := file.Stat()
-	if err == nil {
-		if fi.Size() != res.ContentLength {
-			panic(CurlError{name, -3, "Downlaod size verify error, please check your network."})
+			progressbar(name, start, 50, "")
 		}
 	}
+}
+
+func isBodyBytes(content string) (isBytes bool) {
+	if strings.Index(content, "json") != -1 {
+		isBytes = false
+	} else if strings.Index(content, "text") != -1 {
+		isBytes = false
+	} else if strings.Index(content, "application") != -1 {
+		isBytes = true
+	}
+	return
 }
 
 func maxNameLength(names []string) int {
