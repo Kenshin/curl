@@ -176,21 +176,8 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
     -8: Write Content-Type:text error.
 
    Return:
-    dl( Download struct )
+    dl( []Task Download struct )
     err( []CurlError array)
-
-   For example:
-
-    // simple download
-    dl, err := curl.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "node.exe", os.TempDir()+"/"+"node.exe")
-
-    // multi download
-    dl := curl.Download{}
-    ts := new(curl.Task)
-    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "node.exe", os.TempDir()+"/"+"node.exe"))
-    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node3.exe", os.TempDir()+"/"+"node3.exe"))
-    dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()+"/"+"ChromeSetup.zip"))
-    newDL, err := New(dl)
 
    Console show:
     Start download [aaa, bbb, node, npm, ccccccc].
@@ -200,6 +187,35 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
         npm: download error.
     cccc...: 30% [=========>________________________] 2s
     End download.
+
+   For example:
+
+	// simple download
+	newDL, err := New("http://npm.taobao.org/mirrors/node/v0.10.26/node.exe")
+	fmt.Printf("curl.New return ld  is %v\n", newDL)
+	fmt.Printf("curl.New return err is %v\n", err)
+
+	// multi download
+	ts := Task{}
+	ts1 := ts.New("http://7x2xql.com1.z0.glb.clouddn.com/visualhunt.json")
+	ts2 := ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/02073.jpg")
+	ts3 := ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/0207.jpg")
+	newDL, err = New(ts1, ts2, ts3)
+	fmt.Printf("curl.New return ld  is %v\n", newDL)
+	fmt.Printf("curl.New return err is %v\n", err)
+
+	dl := Download{
+		ts.New("http://7x2xql.com1.z0.glb.clouddn.com/visualhunt.json"),
+		ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/02073.jpg"),
+		ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/0207.jpg"),
+	}
+	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "nodeeeeeeeeeeeeeeeeeeeeeeee.exe", os.TempDir()))
+	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe", os.TempDir()))
+	dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()))
+	newDL, err = New(dl)
+
+	fmt.Printf("curl.New return ld  is %v\n", newDL)
+	fmt.Printf("curl.New return err is %v\n", err)
 */
 func New(args ...interface{}) (dl Download, errStack []CurlError) {
 	curLine = -1
