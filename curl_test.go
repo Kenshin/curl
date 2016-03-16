@@ -44,32 +44,35 @@ func TestCurl(t *testing.T) {
 	fmt.Printf("curl.New return err is %v\n", err)
 
 	/*
-		dl := Download{}
+			dl := Download{}
 
-		url := "http://npm.taobao.org/mirrors/node/latest/node.exe"
-		parseArgs(&dl, errStack, url)
+			url := "http://npm.taobao.org/mirrors/node/latest/node.exe"
+			parseArgs(&dl, errStack, url)
 
-		ts := Task{}
-		ts1 := ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe", os.TempDir())
-		ts2 := ts.New("http://npm.taobao.org/mirrors/node/v5.7.2/win-x64/node.exe", "node2.exe", os.TempDir())
-		ts3 := ts.New("http://npm.taobao.org/mirrors/node/v5.7.3/win-x64/node.exe", "node3.exe", os.TempDir())
-		parseArgs(&dl, errStack, ts1, ts2, ts3)
+			ts := Task{}
+			ts1 := ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe", os.TempDir())
+			ts2 := ts.New("http://npm.taobao.org/mirrors/node/v5.7.2/win-x64/node.exe", "node2.exe", os.TempDir())
+			ts3 := ts.New("http://npm.taobao.org/mirrors/node/v5.7.3/win-x64/node.exe", "node3.exe", os.TempDir())
+			parseArgs(&dl, errStack, ts1, ts2, ts3)
 
-		ts := new(Task)
-		dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "node.exe", os.TempDir()))
-		dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe", os.TempDir()))
-		dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()))
-	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "nodeeeeeeeeeeeeeeeeeeeeeeee.exe", os.TempDir()))
-	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe", os.TempDir()))
-	    dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()))
-	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x86/node.exe", "node40.exe"))
-	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.1.1/win-x86/node.exe", "node41.exe"))
-	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.4.0/win-x86/node.exe", "node42.exe"))
-	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.3.0/win-x86/node.exe", "node43.exe"))
-	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.2.0/win-x86/node.exe", "node44.exe"))
-	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.1.0/win-x86/node.exe", "node45.exe"))
-	    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.0.0/win-x86/node.exe", "node46.exe"))
-		parseArgs(&dl, dl)
+			ts := new(Task)
+			dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "node.exe", os.TempDir()))
+			dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe", os.TempDir()))
+			dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()))
+		    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "nodeeeeeeeeeeeeeeeeeeeeeeee.exe", os.TempDir()))
+		    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe", os.TempDir()))
+		    dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()))
+		    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x86/node.exe", "node40.exe"))
+		    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.1.1/win-x86/node.exe", "node41.exe"))
+		    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.4.0/win-x86/node.exe", "node42.exe"))
+		    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.3.0/win-x86/node.exe", "node43.exe"))
+		    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.2.0/win-x86/node.exe", "node44.exe"))
+		    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.1.0/win-x86/node.exe", "node45.exe"))
+		    dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v4.0.0/win-x86/node.exe", "node46.exe"))
+		    dl.AddTask(ts.New("http://7x2xql.com1.z0.glb.clouddn.com/visualhunt.json"))
+			dl.AddTask(ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/02073.jpg"))
+			dl.AddTask(ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/0207.jpg"))
+			parseArgs(&dl, dl)
 	*/
 
 }
