@@ -32,6 +32,7 @@ func TestCurl(t *testing.T) {
 	fmt.Printf("curl.New return ld  is %v\n", newDL)
 	fmt.Printf("curl.New return err is %v\n", err)
 
+	// multi download
 	ts := Task{}
 	ts1 := ts.New("http://7x2xql.com1.z0.glb.clouddn.com/visualhunt.json")
 	ts2 := ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/02073.jpg")
@@ -40,7 +41,6 @@ func TestCurl(t *testing.T) {
 	fmt.Printf("curl.New return ld  is %v\n", newDL)
 	fmt.Printf("curl.New return err is %v\n", err)
 
-	// multi download
 	dl := Download{
 		ts.New("http://7x2xql.com1.z0.glb.clouddn.com/visualhunt.json"),
 		ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/02073.jpg"),
