@@ -405,7 +405,7 @@ func curMove(line, max int) {
 	mutex.Lock()
 	switch {
 	case curLine == -1:
-		curUp(max - line)
+		curReset(max - line)
 	case line < curLine:
 		curUp(curLine - line)
 	case line > curLine:

@@ -81,6 +81,16 @@ func setConsoleCursorPosition(handle uintptr, position COORD) {
 	}
 }
 
+func curReset(i int) {
+	var info, err = getConsoleScreenBufferInfo(stdoutHandle)
+	if err != nil {
+		panic("could not get console screen buffer info")
+	}
+	position = info.CursorPosition
+	position.Y -= SHORT(i)
+	setConsoleCursorPosition(stdoutHandle, position)
+}
+
 func curUp(i int) {
 	getCursorPosition()
 	position.Y -= SHORT(i)
