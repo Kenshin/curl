@@ -294,6 +294,13 @@ func download(ts *Task, line, max int, errStack *[]CurlError) {
 	}
 	defer res.Body.Close()
 
+	// create dst
+	if !isDirExist(dst) {
+		if err := os.Mkdir(dst, 0777); err != nil {
+			panic(CurlError{name, -2, "Create folder error, Error: " + err.Error()})
+		}
+	}
+
 	// create file
 	file, createErr := os.Create(dst + name)
 	if createErr != nil {
@@ -343,6 +350,15 @@ func download(ts *Task, line, max int, errStack *[]CurlError) {
 			curMove(line, max)
 			progressbar(name, start, 50, "")
 		}
+	}
+}
+
+func isDirExist(path string) bool {
+	_, err := os.Stat(path)
+	if err != nil {
+		return os.IsExist(err)
+	} else {
+		return true
 	}
 }
 
