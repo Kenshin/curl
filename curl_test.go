@@ -43,12 +43,12 @@ func TestCurl(t *testing.T) {
 
 	dl := Download{
 		ts.New("http://7x2xql.com1.z0.glb.clouddn.com/visualhunt.json"),
-		ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/02073.jpg"),
-		ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/0207.jpg"),
+		ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/02073.jpg", "1111.jpg"),
+		ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/0207.jpg", "2222.jpg"),
 	}
-	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "nodeeeeeeeeeeeeeeeeeeeeeeee.exe", os.TempDir()))
-	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe", os.TempDir()))
-	dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()))
+	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "latest", "nodeeeeeeeeeeeeeeeeeeeeeeee.exe", os.TempDir()))
+	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "5.7.0", "node4.exe"))
+	dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "chrome 49.01", "ChromeSetup.zip"))
 	newDL, err = New(dl)
 
 	fmt.Printf("curl.New return ld  is %v\n", newDL)
