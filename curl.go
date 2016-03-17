@@ -43,10 +43,11 @@ func (err CurlError) Error() string {
 
 // Task struct
 type Task struct {
-	Url  string
-	Name string
-	Dst  string
-	Code int
+	Url   string
+	Title string
+	Name  string
+	Dst   string
+	Code  int
 }
 
 // Receive url, name and dst
@@ -55,7 +56,7 @@ func (ts Task) New(args ...interface{}) Task {
 	if len(args) == 0 {
 		panic(CurlError{"curl.New()", -6, "curl.New() parameter type error."})
 	} else {
-		ts.Url, ts.Name, ts.Dst = safeArgs(args...)
+		ts.Url, ts.Title, ts.Name, ts.Dst = safeArgs(args...)
 	}
 	return ts
 }
@@ -158,35 +159,36 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
    Download method
 
    Parameter:
-    simple download model:
-        url : download url e.g. http://nodejs.org/dist/v0.10.0/node.exe
-        name: download file name e.g. node.exe
-        dst : download path
-    multi download model:
-    Download struct
+	simple download model:
+		url  : download url e.g. http://nodejs.org/dist/v0.10.0/node.exe
+		title: download task label.
+		name : download file name e.g. node.exe
+		dst  : download path
+	multi download model:
+	Download struct
 
    Return code:
-     0: success
-    -2: create file error.
-    -3: download node.exe size error.
-    -4: content length = -1.
-    -5: panic error.
-    -6: curl.New() parameter type error.
-    -7: Download size error.
-    -8: Write Content-Type:text error.
+	 0: success
+	-2: create file error.
+	-3: download node.exe size error.
+	-4: content length = -1.
+	-5: panic error.
+	-6: curl.New() parameter type error.
+	-7: Download size error.
+	-8: Write Content-Type:text error.
 
    Return:
-    dl( []Task Download struct )
-    err( []CurlError array)
+	dl( []Task Download struct )
+	err( []CurlError array)
 
    Console show:
-    Start download [aaa, bbb, node, npm, ccccccc].
-        aaa: 70% [==============>__________________] 925ms
-        bbb: 10% [===>_____________________________] 2s
-       node: 100% [===============================>] 10s
-        npm: download error.
-    cccc...: 30% [=========>________________________] 2s
-    End download.
+	Start download [aaa, bbb, node, npm, ccccccc].
+		aaa: 70% [==============>__________________] 925ms
+		bbb: 10% [===>_____________________________] 2s
+	   node: 100% [===============================>] 10s
+		npm: download error.
+	cccc...: 30% [=========>________________________] 2s
+	End download.
 
    For example:
 
@@ -209,9 +211,9 @@ func ReadLine(body io.ReadCloser, process processFunc) error {
 		ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/02073.jpg"),
 		ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/0207.jpg"),
 	}
-	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "nodeeeeeeeeeeeeeeeeeeeeeeee.exe", os.TempDir()))
-	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe", os.TempDir()))
-	dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()))
+	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "nodeeeeeeeeeeeeeeeeeeeeeeee.exe"))
+	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe"))
+	dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "Chrome 49"))
 	newDL, err = New(dl)
 
 	fmt.Printf("curl.New return ld  is %v\n", newDL)
@@ -230,12 +232,12 @@ func New(args ...interface{}) (dl Download, errStack []CurlError) {
 		}
 	}()
 
-	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("Name"), ", "))
-	maxNameLen = maxNameLength(dl.GetValues("Name"))
+	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("Title"), ", "))
+	maxNameLen = maxTitleLength(dl.GetValues("Title"))
 
 	wg.Add(count)
 	for i := 0; i < count; i++ {
-		progressbar(dl[i].Name, time.Now(), 0, "\n")
+		progressbar(dl[i].Title, time.Now(), 0, "\n")
 		go func(dl Download, num int) {
 			download(&dl[num], num, count, &errStack)
 			wg.Done()
@@ -256,8 +258,8 @@ func parseArgs(args ...interface{}) (int, Download) {
 	} else {
 		switch args[0].(type) {
 		case string:
-			url, name, dst := safeArgs(args...)
-			dl.AddTask(Task{url, name, dst, 0})
+			url, title, name, dst := safeArgs(args...)
+			dl.AddTask(Task{url, title, name, dst, 0})
 		case Task:
 			for _, v := range args {
 				dl.AddTask(v.(Task))
@@ -270,18 +272,18 @@ func parseArgs(args ...interface{}) (int, Download) {
 }
 
 func download(ts *Task, line, max int, errStack *[]CurlError) {
-	url, name, dst := ts.Url, ts.Name, safeDst(ts.Dst)
+	url, title, name, dst := ts.Url, ts.Title, ts.Name, safeDst(ts.Dst)
 	defer func() {
 		if err := recover(); err != nil {
 			if v, ok := err.(CurlError); ok {
 				*errStack = append(*errStack, v)
 				ts.Code = v.code
 			} else {
-				*errStack = append(*errStack, CurlError{name, -5, err})
+				*errStack = append(*errStack, CurlError{url, -5, err})
 				ts.Code = -5
 			}
 			curMove(line, max)
-			msg := fmt.Sprintf("%v download error.", safeName(name))
+			msg := fmt.Sprintf("%v download error.", safeTitle(title))
 			empty := strings.Repeat(" ", 80-len(msg))
 			fmt.Printf("\r%v%v", msg, empty)
 		}
@@ -297,20 +299,20 @@ func download(ts *Task, line, max int, errStack *[]CurlError) {
 	// create dst
 	if !isDirExist(dst) {
 		if err := os.Mkdir(dst, 0777); err != nil {
-			panic(CurlError{name, -2, "Create folder error, Error: " + err.Error()})
+			panic(CurlError{url, -2, "Create folder error, Error: " + err.Error()})
 		}
 	}
 
 	// create file
 	file, createErr := os.Create(dst + name)
 	if createErr != nil {
-		panic(CurlError{name, -2, "Create file error, Error: " + createErr.Error()})
+		panic(CurlError{url, -2, "Create file error, Error: " + createErr.Error()})
 	}
 	defer file.Close()
 
 	// verify content length
 	if res.ContentLength == -1 && isBodyBytes(res.Header.Get("Content-Type")) {
-		panic(CurlError{name, -4, "Download content length is -1."})
+		panic(CurlError{url, -4, "Download content length is -1."})
 	}
 
 	start := time.Now()
@@ -323,32 +325,32 @@ func download(ts *Task, line, max int, errStack *[]CurlError) {
 				break
 			}
 			if err != nil && err.Error() != "EOF" {
-				panic(CurlError{name, -7, "Download size error, Error: ." + err.Error()})
+				panic(CurlError{url, -7, "Download size error, Error: ." + err.Error()})
 			}
 			m = m + float32(n)
 			i := int(m / float32(res.ContentLength) * 50)
 			file.WriteString(string(buf[:n]))
 
-			func(name string, start time.Time, i, line, max int) {
+			func(title string, start time.Time, i, line, max int) {
 				curMove(line, max)
-				progressbar(name, start, i, "")
-			}(name, start, i, line, max)
+				progressbar(title, start, i, "")
+			}(title, start, i, line, max)
 		}
 
 		// valid download exe
 		fi, err := file.Stat()
 		if err == nil {
 			if fi.Size() != res.ContentLength {
-				panic(CurlError{name, -3, "Downlaod size verify error, please check your network."})
+				panic(CurlError{url, -3, "Downlaod size verify error, please check your network."})
 			}
 		}
 	} else {
 		if bytes, err := ioutil.ReadAll(bufio.NewReader(res.Body)); err != nil {
-			panic(CurlError{name, -8, err.Error()})
+			panic(CurlError{url, -8, err.Error()})
 		} else {
 			file.Write(bytes)
 			curMove(line, max)
-			progressbar(name, start, 50, "")
+			progressbar(title, start, 50, "")
 		}
 	}
 }
@@ -373,9 +375,9 @@ func isBodyBytes(content string) (isBytes bool) {
 	return
 }
 
-func maxNameLength(names []string) int {
+func maxTitleLength(titles []string) int {
 	max := 0
-	for _, v := range names {
+	for _, v := range titles {
 		if len(v) > max {
 			max = len(v)
 		}
@@ -386,14 +388,14 @@ func maxNameLength(names []string) int {
 	return max
 }
 
-func safeName(name string) string {
+func safeTitle(title string) string {
 	h := ""
-	if len(name) > 15 {
-		name = name[:12] + "..."
-	} else if len(name) <= maxNameLen {
-		h = strings.Repeat(" ", maxNameLen-len(name))
+	if len(title) > 15 {
+		title = title[:12] + "..."
+	} else if len(title) <= maxNameLen {
+		h = strings.Repeat(" ", maxNameLen-len(title))
 	}
-	return h + name + ":"
+	return h + title + ":"
 }
 
 func safeDst(dst string) string {
@@ -403,29 +405,40 @@ func safeDst(dst string) string {
 	return dst
 }
 
-func safeArgs(args ...interface{}) (url, name, dst string) {
+/*
+ arg1: url
+ arg2: title
+ arg3: name
+ arg4: dst
+*/
+func safeArgs(args ...interface{}) (url, title, name, dst string) {
 	url = args[0].(string)
 	switch len(args) {
 	case 1:
 		names := strings.Split(url, "/")
-		name = names[len(names)-1:][0]
+		title = names[len(names)-1:][0]
+		name = title
 		dst, _ = os.Getwd()
 	case 2:
-		name = args[1].(string)
+		title = args[1].(string)
+		name = title
 		dst, _ = os.Getwd()
 	case 3:
-		name, dst = args[1].(string), args[2].(string)
+		title, name = args[1].(string), args[2].(string)
+		dst, _ = os.Getwd()
+	case 4:
+		title, name, dst = args[1].(string), args[2].(string), args[3].(string)
 	}
 	return
 }
 
 /*
- name: 70% [==============>__________________] 925ms
+ title: 70% [==============>__________________] 925ms
 */
-func progressbar(name string, start time.Time, i int, suffix string) {
+func progressbar(title string, start time.Time, i int, suffix string) {
 	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
 	d := time.Now().Sub(start)
-	s := fmt.Sprintf("%v %.0f%% [%s] %v", safeName(name), float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
+	s := fmt.Sprintf("%v %.0f%% [%s] %v", safeTitle(title), float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
 	if len(s) > 80 {
 		s = s[:80]
 	}
