@@ -51,56 +51,65 @@ type (
 	processFunc func(content string, line int) bool
 )
 
-// Print Error
-func (err CurlError) Error() string {
-	name := fmt.Sprintf("Name  : %v\n", err.name)
-	code := fmt.Sprintf("Code  : %v\n", err.code)
-	msg := fmt.Sprintf("Error : %v", err.message)
+/*
+  defined error interace, Print Error
+*/
+func (this CurlError) Error() string {
+	name := fmt.Sprintf("Name  : %v\n", this.name)
+	code := fmt.Sprintf("Code  : %v\n", this.code)
+	msg := fmt.Sprintf("Error : %v", this.message)
 	return "\n" + name + code + msg
 }
 
-// Receive url, name and dst
-// Retruns New Task
-func (ts Task) New(args ...interface{}) Task {
+/*
+ receive arguments and return an new task struct
+*/
+func (this Task) New(args ...interface{}) Task {
 	if len(args) == 0 {
 		panic(CurlError{"curl.New()", -6, "curl.New() parameter type error."})
 	} else {
-		ts.Url, ts.Title, ts.Name, ts.Dst = safeArgs(args...)
+		this.Url, this.Title, this.Name, this.Dst = safeArgs(args...)
 	}
-	return ts
+	return this
 }
 
-// Append Download task arrray
-func (dl *Download) AddTask(ts Task) {
-	*dl = append(*dl, ts)
+/*
+ append task struct to downlaod struct
+*/
+func (this *Download) AddTask(ts Task) {
+	*this = append(*this, ts)
 }
 
-// Get Download struct values by key
-func (dl Download) GetValues(key string) []string {
+/*
+ return downlaod struct values by key
+*/
+func (this Download) GetValues(key string) []string {
 	var arr []string
-	for i := 0; i < len(dl); i++ {
-		v := reflect.ValueOf(dl[i]).FieldByName(key)
+	for i := 0; i < len(this); i++ {
+		v := reflect.ValueOf(this[i]).FieldByName(key)
 		arr = append(arr, v.String())
 	}
 	return arr
 }
 
-// Get url method
-//
-//  url e.g. http://nodejs.org/dist/v0.10.0/node.exe
-//
-// Return code
-//   0: success
-//  -1: status code != 200
-//
-// Return res, err
-//
-// For example:
-//  code, res, _ := curl.Get("http://nodejs.org/dist/")
-//  if code != 0 {
-//      return
-//  }
-//  defer res.Body.Close()
+/*
+   Get URL method
+
+    url e.g. http://nodejs.org/dist/v0.10.0/node.exe
+
+   Return code
+     0: success
+    -1: status code != 200
+
+   Return res, err
+
+   For example:
+    code, res, _ := curl.Get("http:  nodejs.org/dist/")
+    if code != 0 {
+        return
+    }
+    defer res.Body.Close()
+*/
 func Get(url string) (code int, res *http.Response, err error) {
 
 	// get res
@@ -120,17 +129,19 @@ func Get(url string) (code int, res *http.Response, err error) {
 	return 0, res, err
 }
 
-// Read line from io.ReadCloser
-//
-// For example:
-//  versionFunc := func(content string, line int) bool {
-//    // TO DO
-//    return false
-//  }
-//
-//  if err := curl.ReadLine(res.Body, versionFunc); err != nil && err != io.EOF {
-//    //TO DO
-//  }
+/*
+   Read line from io.ReadCloser
+
+   For example:
+    versionFunc := func(content string, line int) bool {
+         TO DO
+      return false
+    }
+
+    if err := curl.ReadLine(res.Body, versionFunc); err != nil && err != io.EOF {
+        TO DO
+    }
+*/
 func ReadLine(body io.ReadCloser, process processFunc) error {
 
 	var content string
