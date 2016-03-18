@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 /*
@@ -50,9 +51,10 @@ func progressbar(title string, start time.Time, i int, suffix string) {
 	h := Options.LeftEnd + strings.Repeat(Options.Fill, i) + Options.Arrow + strings.Repeat(Options.Empty, 50-i) + Options.RightEnd
 	d := time.Now().Sub(start)
 	s := fmt.Sprintf("%v %.0f%% %s %v", safeTitle(title), float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
-	if len(s) > 80 {
+	l := utf8.RuneCountInString(s)
+	if l > 80 {
 		s = s[:80]
 	}
-	e := strings.Repeat(" ", 80-len(s))
+	e := strings.Repeat(" ", 80-l)
 	fmt.Printf("\r%v%v%v", s, e, suffix)
 }
