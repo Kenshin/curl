@@ -23,7 +23,7 @@ type PrintOps struct {
 /*
  Set PrintOps default values
 */
-var Options = PrintOps{true, true, "[", "]", "=", ">", "-"}
+var Options = PrintOps{true, true, "[", "]", "=", ">", "_"}
 
 /*
  Print Header
@@ -53,8 +53,10 @@ func progressbar(title string, start time.Time, i int, suffix string) {
 	s := fmt.Sprintf("%v %.0f%% %s %v", safeTitle(title), float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
 	l := utf8.RuneCountInString(s)
 	if l > 80 {
-		s = s[:80]
+		l = l - 80
+	} else {
+		l = 80 - l
 	}
-	e := strings.Repeat(" ", 80-l)
+	e := strings.Repeat(" ", l)
 	fmt.Printf("\r%v%v%v", s, e, suffix)
 }
