@@ -26,12 +26,30 @@ var (
 	count      int           = 0
 )
 
-// Curl Error struct
-type CurlError struct {
-	name    string      // Task struct Name
-	code    int         // Task struct Code
-	message interface{} // Error message
-}
+type (
+	// Curl Error struct
+	CurlError struct {
+		name    string      // Task struct Name
+		code    int         // Task struct Code
+		message interface{} // Error message
+	}
+
+	// Task struct
+	Task struct {
+		Url   string
+		Title string
+		Name  string
+		Dst   string
+		Code  int
+	}
+
+	// Task array
+	Download []Task
+
+	// Read line use callback Process
+	// Line by line to obtain content and line num
+	processFunc func(content string, line int) bool
+)
 
 // Print Error
 func (err CurlError) Error() string {
@@ -39,15 +57,6 @@ func (err CurlError) Error() string {
 	code := fmt.Sprintf("Code  : %v\n", err.code)
 	msg := fmt.Sprintf("Error : %v", err.message)
 	return "\n" + name + code + msg
-}
-
-// Task struct
-type Task struct {
-	Url   string
-	Title string
-	Name  string
-	Dst   string
-	Code  int
 }
 
 // Receive url, name and dst
@@ -60,8 +69,6 @@ func (ts Task) New(args ...interface{}) Task {
 	}
 	return ts
 }
-
-type Download []Task
 
 // Append Download task arrray
 func (dl *Download) AddTask(ts Task) {
@@ -77,10 +84,6 @@ func (dl Download) GetValues(key string) []string {
 	}
 	return arr
 }
-
-// Read line use callback Process
-// Line by line to obtain content and line num
-type processFunc func(content string, line int) bool
 
 // Get url method
 //
@@ -250,6 +253,9 @@ func New(args ...interface{}) (dl Download, errStack []CurlError) {
 	return
 }
 
+/*
+ download ( text/binary ) and save it.
+*/
 func download(ts *Task, line, max int, errStack *[]CurlError) {
 	url, title, name, dst := ts.Url, ts.Title, ts.Name, safeDst(ts.Dst)
 	defer func() {
@@ -348,6 +354,9 @@ func progressbar(title string, start time.Time, i int, suffix string) {
 	fmt.Printf("\r%v%v%v", s, e, suffix)
 }
 
+/*
+  cursor move( up and down )
+*/
 func curMove(line, max int) {
 	mutex.Lock()
 	switch {
