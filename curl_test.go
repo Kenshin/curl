@@ -9,12 +9,12 @@ import (
 )
 
 func TestCurl(t *testing.T) {
-	//testGet()
-	//testReadLine()
-	//testSimpleNew()
-	//testMultiNewMode1()
-	//testMultiNewMode2()
 	testPrint()
+	testGet()
+	testReadLine()
+	testSimpleNew()
+	testMultiNewMode1()
+	testMultiNewMode2()
 }
 
 func testGet() {
@@ -95,9 +95,10 @@ func testMultiNewMode2() {
 }
 
 func testPrint() {
-	Options = PrintOps{true, true, "[", "]", "=", ">", "-"}
+	Options = PrintOps{true, true, "", "", "█", "", " "}
+	start := time.Now()
 	for i := 1; i <= 50; i++ {
 		time.Sleep(time.Millisecond * 200)
-		progressbar("Test Process", time.Now(), i, "")
+		progressbar("Test Process", start, i, "")
 	}
 }
