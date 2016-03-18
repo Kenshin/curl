@@ -244,8 +244,8 @@ func New(args ...interface{}) (dl Download, errStack []CurlError) {
 		}
 	}()
 
-	fmt.Printf("Start download [%v].\n%v", strings.Join(dl.GetValues("Title"), ", "))
 	maxNameLen = maxTitleLength(dl.GetValues("Title"))
+	header(&dl)
 
 	wg.Add(count)
 	for i := 0; i < count; i++ {
@@ -258,7 +258,7 @@ func New(args ...interface{}) (dl Download, errStack []CurlError) {
 	wg.Wait()
 
 	curDown(count - curLine)
-	fmt.Println("\r--------\nEnd download.")
+	footer()
 
 	return
 }
@@ -348,20 +348,6 @@ func download(ts *Task, line, max int, errStack *[]CurlError) {
 			progressbar(title, start, 50, "")
 		}
 	}
-}
-
-/*
- title: 70% [==============>__________________] 925ms
-*/
-func progressbar(title string, start time.Time, i int, suffix string) {
-	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
-	d := time.Now().Sub(start)
-	s := fmt.Sprintf("%v %.0f%% [%s] %v", safeTitle(title), float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
-	if len(s) > 80 {
-		s = s[:80]
-	}
-	e := strings.Repeat(" ", 80-len(s))
-	fmt.Printf("\r%v%v%v", s, e, suffix)
 }
 
 /*
