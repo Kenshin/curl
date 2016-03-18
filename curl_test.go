@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestCurl(t *testing.T) {
@@ -96,8 +97,9 @@ func testMultiNewMode2() {
 func testPrint() {
 	//Options = PrintOps{true, false}
 	//Options.Arrow = "|"
-	Options.Fill = "+"
-	newDL, err := New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe")
-	fmt.Printf("curl.New return ld  is %v\n", newDL)
-	fmt.Printf("curl.New return err is %v\n", err)
+	Options.Fill = "■"
+	for i := 1; i <= 50; i++ {
+		time.Sleep(time.Millisecond * 500)
+		progressbar("title string", time.Now(), i, "")
+	}
 }
