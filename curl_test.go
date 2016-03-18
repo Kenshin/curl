@@ -8,11 +8,12 @@ import (
 )
 
 func TestCurl(t *testing.T) {
-	testGet()
-	testReadLine()
-	testSimpleNew()
-	testMultiNewMode1()
-	testMultiNewMode2()
+	//testGet()
+	//testReadLine()
+	//testSimpleNew()
+	//testMultiNewMode1()
+	//testMultiNewMode2()
+	testPrint()
 }
 
 func testGet() {
@@ -88,6 +89,15 @@ func testMultiNewMode2() {
 	dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "5.7.0", "node4.exe"))
 	dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "chrome 49.01", "ChromeSetup.zip"))
 	newDL, err := New(dl)
+	fmt.Printf("curl.New return ld  is %v\n", newDL)
+	fmt.Printf("curl.New return err is %v\n", err)
+}
+
+func testPrint() {
+	//Options = PrintOps{true, false}
+	//Options.Arrow = "|"
+	Options.Fill = "+"
+	newDL, err := New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe")
 	fmt.Printf("curl.New return ld  is %v\n", newDL)
 	fmt.Printf("curl.New return err is %v\n", err)
 }
