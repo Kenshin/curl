@@ -47,9 +47,9 @@ func footer() {
  title: 70% [==============>__________________] 925ms
 */
 func progressbar(title string, start time.Time, i int, suffix string) {
-	h := strings.Repeat(Options.Fill, i) + Options.Arrow + strings.Repeat(Options.Empty, 50-i)
+	h := Options.LeftEnd + strings.Repeat(Options.Fill, i) + Options.Arrow + strings.Repeat(Options.Empty, 50-i) + Options.RightEnd
 	d := time.Now().Sub(start)
-	s := fmt.Sprintf("%v %.0f%% [%s] %v", safeTitle(title), float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
+	s := fmt.Sprintf("%v %.0f%% %s %v", safeTitle(title), float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
 	if len(s) > 80 {
 		s = s[:80]
 	}
