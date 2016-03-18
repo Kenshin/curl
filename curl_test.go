@@ -95,11 +95,9 @@ func testMultiNewMode2() {
 }
 
 func testPrint() {
-	//Options = PrintOps{true, false}
-	//Options.Arrow = "|"
-	Options.Fill = "■"
+	Options = PrintOps{true, true, "[", "]", "=", ">", "-"}
 	for i := 1; i <= 50; i++ {
-		time.Sleep(time.Millisecond * 500)
-		progressbar("title string", time.Now(), i, "")
+		time.Sleep(time.Millisecond * 200)
+		progressbar("Test Process", time.Now(), i, "")
 	}
 }
