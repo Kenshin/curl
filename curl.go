@@ -1,7 +1,9 @@
 /*
-Curl is Simple http download and readline lib by Golang. Vesion 0.0.4
-Website https://github.com/kenshin/curl
-Copyright (c) 2014-2016 Kenshin Wang <kenshin@ksria.com>
+ Curl - Multiple download lib with CLI by Golang. Vesion 0.0.4
+
+ Website https://github.com/kenshin/curl
+
+ Copyright (c) 2014-2016 Kenshin Wang <kenshin@ksria.com>
 */
 package curl
 
@@ -27,14 +29,12 @@ var (
 )
 
 type (
-	// Curl Error struct
 	CurlError struct {
 		name    string      // Task struct Name
 		code    int         // Task struct Code
 		message interface{} // Error message
 	}
 
-	// Task struct
 	Task struct {
 		Url   string
 		Title string
@@ -43,7 +43,6 @@ type (
 		Code  int
 	}
 
-	// Task array
 	Download []Task
 
 	// Read line use callback Process
@@ -62,7 +61,7 @@ func (this CurlError) Error() string {
 }
 
 /*
- receive arguments and return an new task struct
+ Receive arguments and return an new task struct
 */
 func (this Task) New(args ...interface{}) Task {
 	if len(args) == 0 {
@@ -74,14 +73,14 @@ func (this Task) New(args ...interface{}) Task {
 }
 
 /*
- append task struct to downlaod struct
+ Append task struct to downlaod struct
 */
 func (this *Download) AddTask(ts Task) {
 	*this = append(*this, ts)
 }
 
 /*
- return downlaod struct values by key
+ Return downlaod struct values by key
 */
 func (this Download) GetValues(key string) []string {
 	var arr []string
@@ -265,7 +264,7 @@ func New(args ...interface{}) (dl Download, errStack []CurlError) {
 }
 
 /*
- download ( text/binary ) and save it.
+ Download ( text/binary ) and save it.
 */
 func download(ts *Task, line, max int, errStack *[]CurlError) {
 	url, title, name, dst := ts.Url, ts.Title, ts.Name, safeDst(ts.Dst)
@@ -366,7 +365,7 @@ func progressbar(title string, start time.Time, i int, suffix string) {
 }
 
 /*
-  cursor move( up and down )
+  Cursor move( up and down )
 */
 func curMove(line, max int) {
 	mutex.Lock()
