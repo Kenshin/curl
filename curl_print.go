@@ -6,19 +6,48 @@ import (
 	"time"
 )
 
-func header(dl *Download) {
-	fmt.Printf("Start download [%v].\n%v", strings.Join((*dl).GetValues("Title"), ", "))
+/*
+ curl.Print Options
+*/
+type PrintOps struct {
+	Header   bool
+	Footer   bool
+	LeftEnd  string
+	RightEnd string
+	Fill     string
+	Arrow    string
+	Empty    string
 }
 
+/*
+ Set PrintOps default values
+*/
+var Options = PrintOps{true, true, "[", "]", "=", ">", "-"}
+
+/*
+ Print Header
+*/
+func header(dl *Download) {
+	if Options.Header {
+		fmt.Printf("Start download [%v].\n", strings.Join((*dl).GetValues("Title"), ", "))
+	}
+}
+
+/*
+ Print Footer
+*/
+
 func footer() {
-	fmt.Println("\r--------\nEnd download.")
+	if Options.Footer {
+		fmt.Println("\r--------\nEnd download.")
+	}
 }
 
 /*
  title: 70% [==============>__________________] 925ms
 */
 func progressbar(title string, start time.Time, i int, suffix string) {
-	h := strings.Repeat("=", i) + ">" + strings.Repeat("_", 50-i)
+	h := strings.Repeat(Options.Fill, i) + Options.Arrow + strings.Repeat(Options.Empty, 50-i)
 	d := time.Now().Sub(start)
 	s := fmt.Sprintf("%v %.0f%% [%s] %v", safeTitle(title), float32(i)/50*100, h, time.Duration(d.Seconds())*time.Second)
 	if len(s) > 80 {
