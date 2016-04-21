@@ -153,8 +153,8 @@ LICENSE
 [gitter-badge]:     https://badges.gitter.im/kenshin/curl.svg
 [gitter-link]:      https://gitter.im/kenshin/curl?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
 [slack-badge]:      https://img.shields.io/badge/chat-slack-orange.svg
-[slack-link]:       https://curl.slack.com/
+[slack-link]:       https://ksria.slack.com/messages/curl/
 [jianliao-badge]:   https://img.shields.io/badge/chat-jianliao-yellowgreen.svg
-[jianliao-link]:    https://guest.jianliao.com/rooms/76dce8b01v
+[jianliao-link]:    https://guest.jianliao.com/rooms/051fbb0025
 [license-badge]:    https://img.shields.io/github/license/mashape/apistatus.svg
 [license-link]:     https://opensource.org/licenses/MIT
