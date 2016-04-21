@@ -1,5 +1,15 @@
-Curl: Multiple download lib with CLI by Golang [![Build Status](https://api.travis-ci.org/Kenshin/curl.svg?branch=master)](https://travis-ci.org/Kenshin/curl)
+Curl - Multiple download lib with CLI by Golang  
+[![Build Status](https://api.travis-ci.org/Kenshin/curl.svg?branch=master)](https://travis-ci.org/Kenshin/curl)
+[![Version][version-badge]][version-link]
+[![Gitter][gitter-badge]][gitter-link]
+[![Slack][slack-badge]][slack-link]
+[![Jianliao][jianliao-badge]][jianliao-link]  
 ================================
+![Multi-download](http://i.imgur.com/BRb7vm1.gif)
+
+Document
+---
+[English](https://github.com/kenshin/curl/blob/master/README.en.md) | [繁體中文](https://github.com/kenshin/curl/blob/master/README.tw.md)
 
 Documentation
 ---
@@ -14,7 +24,7 @@ Usage
 ---
 `import "github.com/Kenshin/curl"`
 
-Example
+Getting Started
 ---
 ##### Read line:
 ```
@@ -84,10 +94,11 @@ Support
 * Linux
 * Windows ( usage `kernel32.dll` and `SetConsoleCursorPosition` fuction )
 
-Help
+About
 ---
-* Email: <kenshin@ksria.com>
-* [Github issue](https://github.com/Kenshin/curl/issues/new)
+* [CHANGELOG](https://github.com/kenshin/curl/blob/master/CHANGELOG.md)
+* [Contact](http://kenshin.wang/) | [Email](kenshin@ksria.com) | [Twitter](https://twitter.com/wanglei001)
+* [Feedback](https://github.com/kenshin/curl/issues)
 
 CHANGELOG
 ---
@@ -116,5 +127,15 @@ LICENSE
 [gowalker-link]:    http://gowalker.org/github.com/kenshin/curl
 [godoc-badge]:      https://godoc.org/github.com/kenshin/curl?status.svg
 [godoc-link]:       https://godoc.org/github.com/kenshin/curl
+[version-badge]:    https://img.shields.io/badge/lastest_version-0.0.4-blue.svg
+[version-link]:     https://github.com/kenshin/curl/releases
+[travis-badge]:     https://travis-ci.org/Kenshin/curl.svg?branch=master
+[travis-link]:      https://travis-ci.org/Kenshin/curl
+[gitter-badge]:     https://badges.gitter.im/kenshin/curl.svg
+[gitter-link]:      https://gitter.im/kenshin/curl?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
+[slack-badge]:      https://img.shields.io/badge/chat-slack-orange.svg
+[slack-link]:       https://curl.slack.com/
+[jianliao-badge]:   https://img.shields.io/badge/chat-jianliao-yellowgreen.svg
+[jianliao-link]:    https://guest.jianliao.com/rooms/76dce8b01v
 [license-badge]:    https://img.shields.io/github/license/mashape/apistatus.svg
 [license-link]:     https://opensource.org/licenses/MIT
