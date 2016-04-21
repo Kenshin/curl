@@ -1,20 +1,17 @@
 Curl - Multiple download lib with CLI by Golang  
 [![Build Status](https://api.travis-ci.org/Kenshin/curl.svg?branch=master)](https://travis-ci.org/Kenshin/curl)
 [![Version][version-badge]][version-link]
+[![Gowalker][gowalker-badge]][gowalker-link]
+[![Godoc][godoc-badge]][godoc-link]
 [![Gitter][gitter-badge]][gitter-link]
 [![Slack][slack-badge]][slack-link]
-[![Jianliao][jianliao-badge]][jianliao-link]  
+[![Jianliao][jianliao-badge]][jianliao-link]
 ================================
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
 Document
 ---
 [English](https://github.com/kenshin/curl/blob/master/README.en.md) | [繁體中文](https://github.com/kenshin/curl/blob/master/README.tw.md)
-
-Documentation
----
-[![Gowalker][gowalker-badge]][gowalker-link]
-[![Godoc][godoc-badge]][godoc-link]
 
 Installation
 ---
@@ -123,7 +120,7 @@ LICENSE
 [![license-badge]][license-link]
 
 <!-- Link -->
-[gowalker-badge]:   https://img.shields.io/badge/go_walker-documentation-green.svg
+[gowalker-badge]:   https://img.shields.io/badge/go_walker-document-green.svg
 [gowalker-link]:    http://gowalker.org/github.com/kenshin/curl
 [godoc-badge]:      https://godoc.org/github.com/kenshin/curl?status.svg
 [godoc-link]:       https://godoc.org/github.com/kenshin/curl
