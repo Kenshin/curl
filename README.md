@@ -8,7 +8,7 @@ Curl - 使用 Go语言 编写的 多任务下载器
 [![Slack][slack-badge]][slack-link]
 [![Jianliao][jianliao-badge]][jianliao-link]  
 
-#### `curl` 是使用 `Go语言` 编写的 `多任务下载器`，可以下载：二进制（ `exe`, `jpg` ），文本文件（ `txt`, `json` ）等格式。
+`curl` 是使用 `Go语言` 编写的 `多任务下载器`，可以下载：二进制（ `exe`, `jpg` ），文本文件（ `txt`, `json` ）等格式。
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
 文档
