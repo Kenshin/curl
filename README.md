@@ -87,6 +87,7 @@ fmt.Printf("curl.New return err is %v\n", err)
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
 ##### Custom download process:
+![custom progress schematic](http://i.imgur.com/F5xjerv.jpg)
 ```
 // npm like
 curl.Options = curl.PrintOps{false, false, "", "", "█", "", "░"}
@@ -94,7 +95,7 @@ newDL, err := New("http://npm.taobao.org/mirrors/node/v0.10.26/node.exe")
 
 node.exe: 100% ███████████████████████████████████████░░░░░░░░ 4s
 ```
-http://i.imgur.com/qokcgfB.gif
+![custom download progressbar](http://i.imgur.com/qokcgfB.gif)
 
 Support
 ---
