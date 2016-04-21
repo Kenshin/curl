@@ -6,7 +6,8 @@ Curl - Multiple download lib with CLI by Golang
 [![Godoc][godoc-badge]][godoc-link]
 [![Gitter][gitter-badge]][gitter-link]
 [![Slack][slack-badge]][slack-link]
-[![Jianliao][jianliao-badge]][jianliao-link]
+[![Jianliao][jianliao-badge]][jianliao-link]  
+
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
 Document
@@ -58,19 +59,19 @@ fmt.Printf("curl.New return err is %v\n", err)
 ##### Multi download:
 ```
 // mode 1
-ts := Task{}
+ts := curl.Task{}
 ts1 := ts.New("http://xxx.xxx.xxx/node/latest/node.exe", "node.exe")
 ts2 := ts.New("http://xxx.xxx.xxx/node/v4.0.0/win-x64/node.exe", "node40.exe")
 ts3 := ts.New("http://xxx.xxx.xxx/node/v4.1.0/win-x64/node.exe", "node41.exe")
 ts4 := ts.New("http://xxx.xxx.xxx/node/v4.2.0/win-x64/node.exe", "node42.exe")
 ts5 := ts.New("http://xxx.xxx.xxx/node/v4.3.0/win-x64/node41.exe", "node43.exe")
-newDL, err := New(ts1, ts2, ts3, ts4, ts5, ts6)
+newDL, err := curl.New(ts1, ts2, ts3, ts4, ts5, ts6)
 
 fmt.Printf("curl.New return ld  is %v\n", newDL)
 fmt.Printf("curl.New return err is %v\n", err)
 
 // mode 2
-dl := Download{
+dl := curl.Download {
     ts.New("http://7x2xql.com1.z0.glb.clouddn.com/visualhunt.json"),
     ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/02073.jpg"),
     ts.New("http://7x2xql.com1.z0.glb.clouddn.com/holiday/0207.jpg"),
@@ -78,12 +79,22 @@ dl := Download{
 dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/latest/node.exe", "nodeeeeeeeeeeeeeeeeeeeeeeee.exe", os.TempDir()))
 dl.AddTask(ts.New("http://npm.taobao.org/mirrors/node/v5.7.0/win-x64/node.exe", "node4.exe", os.TempDir()))
 dl.AddTask(ts.New("https://www.google.com/intl/zh-CN/chrome/browser/?standalone=1&extra=devchannel&platform=win64", "ChromeSetup.zip", os.TempDir()))
-newDL, err = New(dl)
+newDL, err := curl.New(dl)
 
 fmt.Printf("curl.New return ld  is %v\n", newDL)
 fmt.Printf("curl.New return err is %v\n", err)
 ```
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
+
+##### Custom download process:
+```
+// npm like
+curl.Options = curl.PrintOps{false, false, "", "", "█", "", "░"}
+newDL, err := New("http://npm.taobao.org/mirrors/node/v0.10.26/node.exe")
+
+node.exe: 100% ███████████████████████████████████████░░░░░░░░ 4s
+```
+http://i.imgur.com/qokcgfB.gif
 
 Support
 ---
