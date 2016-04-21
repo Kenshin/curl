@@ -8,7 +8,7 @@ curl - Multiple download lib with CLI by Golang
 [![Slack][slack-badge]][slack-link]
 [![Jianliao][jianliao-badge]][jianliao-link]  
 
-`curl` `Multiple download` lib with CLI by `Golang`, `content-type` include: application( `exe`, `jpg`, etc. ), text( `txt`, `json`, etc. ).  
+`curl` is a `Multiple download` lib by `Golang`, `content-type` include: application( `exe`, `jpg`, etc. ), text( `txt`, `json`, etc. ).  
 
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
