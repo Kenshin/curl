@@ -1,4 +1,4 @@
-Curl - Multiple download lib with CLI by Golang  
+curl - Multiple download lib with CLI by Golang  
 ================================
 [![Build Status](https://api.travis-ci.org/Kenshin/curl.svg?branch=master)](https://travis-ci.org/Kenshin/curl)
 [![Version][version-badge]][version-link]

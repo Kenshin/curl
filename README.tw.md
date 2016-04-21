@@ -1,4 +1,4 @@
-Curl - 使用 Go語言 編寫的 多任務下載器
+curl - 使用 Go語言 編寫的 多任務下載器
 ================================
 [![Build Status](https://api.travis-ci.org/Kenshin/curl.svg?branch=master)](https://travis-ci.org/Kenshin/curl)
 [![Version][version-badge]][version-link]
