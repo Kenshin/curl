@@ -8,11 +8,18 @@ Curl - Multiple download lib with CLI by Golang
 [![Slack][slack-badge]][slack-link]
 [![Jianliao][jianliao-badge]][jianliao-link]  
 
+#### `curl` `Multiple download` lib with CLI by `Golang`, Content-Type include: application( `exe`, `jpg` ), text( `txt`, `json` ).
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
 Document
 ---
 [English](https://github.com/kenshin/curl/blob/master/README.en.md) | [繁體中文](https://github.com/kenshin/curl/blob/master/README.tw.md)
+
+Support
+---
+* Mac OS
+* Linux
+* Windows ( usage `kernel32.dll` and `SetConsoleCursorPosition` function )
 
 Installation
 ---
@@ -24,7 +31,7 @@ Usage
 
 Getting Started
 ---
-##### Read line:
+##### Read line
 ```
 // curl.Get
 code, res, _ := curl.Get("http://npm.taobao.org/mirrors/node/latest/SHASUMS256.txt")
@@ -48,7 +55,7 @@ if err := ReadLine(res.Body, processFunc); err != nil && err != io.EOF {
 ```
 ![ReadLine](http://i.imgur.com/7kUdIpE.png)
 
-##### Simple download:
+##### Simple download
 ```
 newDL, err := curl.New("http://npm.taobao.org/mirrors/node/v0.10.26/node.exe")
 fmt.Printf("curl.New return ld  is %v\n", newDL)
@@ -56,7 +63,7 @@ fmt.Printf("curl.New return err is %v\n", err)
 ```
 ![Simple-download](http://i.imgur.com/bNBJ2kG.png)
 
-##### Multi download:
+##### Multi download
 ```
 // mode 1
 ts := curl.Task{}
@@ -86,7 +93,7 @@ fmt.Printf("curl.New return err is %v\n", err)
 ```
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
-##### Custom download process:
+##### Custom download process
 ![custom progress schematic](http://i.imgur.com/F5xjerv.jpg)
 ```
 // npm like
@@ -104,12 +111,6 @@ node.exe: 100% █████████████████████�
 ```
 ![custom download progressbar](http://i.imgur.com/qokcgfB.gif)
 
-Support
----
-* Mac OS
-* Linux
-* Windows ( usage `kernel32.dll` and `SetConsoleCursorPosition` fuction )
-
 About
 ---
 * [CHANGELOG](https://github.com/kenshin/curl/blob/master/CHANGELOG.md)
@@ -120,6 +121,7 @@ CHANGELOG
 ---
 * **2016-03-10, Version `0.0.4` support:**
     * Add multi download.
+    * Add custom progress.
     * Rework `curl.New` function.
     * Adapter Go 1.6.
 
