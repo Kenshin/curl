@@ -1,4 +1,5 @@
 Curl - Multiple download lib with CLI by Golang  
+================================
 [![Build Status](https://api.travis-ci.org/Kenshin/curl.svg?branch=master)](https://travis-ci.org/Kenshin/curl)
 [![Version][version-badge]][version-link]
 [![Gowalker][gowalker-badge]][gowalker-link]
@@ -6,7 +7,6 @@ Curl - Multiple download lib with CLI by Golang
 [![Gitter][gitter-badge]][gitter-link]
 [![Slack][slack-badge]][slack-link]
 [![Jianliao][jianliao-badge]][jianliao-link]
-================================
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
 Document
