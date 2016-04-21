@@ -1,4 +1,4 @@
-Curl - 使用 Go语言 编写的 多任务下载器
+Curl - Multiple download lib with CLI by Golang  
 ================================
 [![Build Status](https://api.travis-ci.org/Kenshin/curl.svg?branch=master)](https://travis-ci.org/Kenshin/curl)
 [![Version][version-badge]][version-link]
@@ -10,25 +10,19 @@ Curl - 使用 Go语言 编写的 多任务下载器
 
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
-文档
+Document
 ---
 [English](https://github.com/kenshin/curl/blob/master/README.en.md) | [繁體中文](https://github.com/kenshin/curl/blob/master/README.tw.md)
 
-支持
----
-* Mac OS
-* Linux
-* Windows ( usage `kernel32.dll` and `SetConsoleCursorPosition` fuction )
-
-安装
+Installation
 ---
 `go get -u github.com/Kenshin/curl`
 
-使用
+Usage
 ---
 `import "github.com/Kenshin/curl"`
 
-入门指南
+Getting Started
 ---
 ##### Read line:
 ```
@@ -110,16 +104,22 @@ node.exe: 100% █████████████████████�
 ```
 ![custom download progressbar](http://i.imgur.com/qokcgfB.gif)
 
-相关链接
+Support
 ---
-* [联系](http://kenshin.wang/) | [邮件](kenshin@ksria.com) | [微博](http://weibo.com/23784148/)
-* [提交问题](https://github.com/kenshin/curl/issues)
+* Mac OS
+* Linux
+* Windows ( usage `kernel32.dll` and `SetConsoleCursorPosition` fuction )
 
-更新日志
+About
+---
+* [CHANGELOG](https://github.com/kenshin/curl/blob/master/CHANGELOG.md)
+* [Contact](http://kenshin.wang/) | [Email](kenshin@ksria.com) | [Twitter](https://twitter.com/wanglei001)
+* [Feedback](https://github.com/kenshin/curl/issues)
+
+CHANGELOG
 ---
 * **2016-03-10, Version `0.0.4` support:**
     * Add multi download.
-    * Add custom progress.
     * Rework `curl.New` function.
     * Adapter Go 1.6.
 
@@ -134,7 +134,7 @@ node.exe: 100% █████████████████████�
     * Get
     * Readline
 
-授权
+LICENSE
 ---
 [![license-badge]][license-link]
 
