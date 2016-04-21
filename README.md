@@ -90,7 +90,14 @@ fmt.Printf("curl.New return err is %v\n", err)
 ![custom progress schematic](http://i.imgur.com/F5xjerv.jpg)
 ```
 // npm like
-curl.Options = curl.PrintOps{false, false, "", "", "█", "", "░"}
+curl.Options.Header = false
+curl.Options.Footer = false
+curl.Options.LeftEnd = ""
+curl.Options.RightEnd = ""
+curl.Options.Fill = "█"
+curl.Options.Arrow = ""
+curl.Options.Empty = "░"
+
 newDL, err := New("http://npm.taobao.org/mirrors/node/v0.10.26/node.exe")
 
 node.exe: 100% ███████████████████████████████████████░░░░░░░░ 4s
