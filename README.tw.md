@@ -1,4 +1,4 @@
-curl - 使用 Go语言 编写的 多任务下载器
+curl - 使用 Go語言 編寫的 多任務下載器
 ================================
 [![Build Status](https://api.travis-ci.org/Kenshin/curl.svg?branch=master)](https://travis-ci.org/Kenshin/curl)
 [![Version][version-badge]][version-link]
@@ -8,11 +8,11 @@ curl - 使用 Go语言 编写的 多任务下载器
 [![Slack][slack-badge]][slack-link]
 [![Jianliao][jianliao-badge]][jianliao-link]  
 
-`curl` 是使用 `Go语言` 编写的 `多任务下载器`，可以下载：二进制（ `exe`, `jpg` ），文本文件（ `txt`, `json` ）等多种格式。  
+`curl` 是使用 `Go語言` 編寫的 `多任務下載器`，可以下載：二進位（ `exe`, `jpg` ），文本文件（ `txt`, `json` ）等多種格式。  
 
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
-文档
+文檔
 ---
 [English](https://github.com/kenshin/curl/blob/master/README.en.md) | [繁體中文](https://github.com/kenshin/curl/blob/master/README.tw.md)
 
@@ -22,7 +22,7 @@ curl - 使用 Go语言 编写的 多任务下载器
 * Linux
 * Windows ( usage `kernel32.dll` and `SetConsoleCursorPosition` function )
 
-安装
+安裝
 ---
 `go get -u github.com/Kenshin/curl`
 
@@ -30,9 +30,9 @@ curl - 使用 Go语言 编写的 多任务下载器
 ---
 `import "github.com/Kenshin/curl"`
 
-入门指南
+入門指南
 ---
-##### 逐行读取文本
+##### 逐行讀取文本
 ```
 // curl.Get
 code, res, _ := curl.Get("http://npm.taobao.org/mirrors/node/latest/SHASUMS256.txt")
@@ -56,7 +56,7 @@ if err := ReadLine(res.Body, processFunc); err != nil && err != io.EOF {
 ```
 ![ReadLine](http://i.imgur.com/7kUdIpE.png)
 
-##### 简单（单任务）下载
+##### 簡單（單任務）下載
 ```
 newDL, err := curl.New("http://npm.taobao.org/mirrors/node/v0.10.26/node.exe")
 fmt.Printf("curl.New return ld  is %v\n", newDL)
@@ -64,7 +64,7 @@ fmt.Printf("curl.New return err is %v\n", err)
 ```
 ![Simple-download](http://i.imgur.com/bNBJ2kG.png)
 
-##### 多任务下载
+##### 多任務下載
 ```
 // mode 1
 ts := curl.Task{}
@@ -94,7 +94,7 @@ fmt.Printf("curl.New return err is %v\n", err)
 ```
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
-##### 自定义下载进度条样式
+##### 自定義下載進度條樣式
 ![custom progress schematic](http://i.imgur.com/F5xjerv.jpg)
 ```
 // npm like
@@ -112,12 +112,12 @@ node.exe: 100% █████████████████████�
 ```
 ![custom download progressbar](http://i.imgur.com/qokcgfB.gif)
 
-相关链接
+相關鏈接
 ---
-* [联系](http://kenshin.wang/) | [邮件](kenshin@ksria.com) | [微博](http://weibo.com/23784148/)
-* [提交问题](https://github.com/kenshin/curl/issues)
+* [聯繫](http://kenshin.wang/) | [郵件](kenshin@ksria.com) | [微博](http://weibo.com/23784148/)
+* [提交問題](https://github.com/kenshin/curl/issues)
 
-更新日志
+更新日誌
 ---
 * **2016-03-10, Version `0.0.4` support:**
     * Add multi download.
@@ -136,7 +136,7 @@ node.exe: 100% █████████████████████�
     * Get
     * Readline
 
-授权
+授權
 ---
 [![license-badge]][license-link]
 

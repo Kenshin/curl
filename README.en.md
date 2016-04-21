@@ -1,4 +1,4 @@
-curl - 使用 Go语言 编写的 多任务下载器
+curl - Multiple download lib with CLI by Golang  
 ================================
 [![Build Status](https://api.travis-ci.org/Kenshin/curl.svg?branch=master)](https://travis-ci.org/Kenshin/curl)
 [![Version][version-badge]][version-link]
@@ -8,31 +8,31 @@ curl - 使用 Go语言 编写的 多任务下载器
 [![Slack][slack-badge]][slack-link]
 [![Jianliao][jianliao-badge]][jianliao-link]  
 
-`curl` 是使用 `Go语言` 编写的 `多任务下载器`，可以下载：二进制（ `exe`, `jpg` ），文本文件（ `txt`, `json` ）等多种格式。  
+`curl` `Multiple download` lib with CLI by `Golang`, `content-type` include: application( `exe`, `jpg`, etc. ), text( `txt`, `json`, etc. ).  
 
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
-文档
+Document
 ---
 [English](https://github.com/kenshin/curl/blob/master/README.en.md) | [繁體中文](https://github.com/kenshin/curl/blob/master/README.tw.md)
 
-支持
+Support
 ---
 * Mac OS
 * Linux
 * Windows ( usage `kernel32.dll` and `SetConsoleCursorPosition` function )
 
-安装
+Installation
 ---
 `go get -u github.com/Kenshin/curl`
 
-使用
+Usage
 ---
 `import "github.com/Kenshin/curl"`
 
-入门指南
+Getting Started
 ---
-##### 逐行读取文本
+##### Read line
 ```
 // curl.Get
 code, res, _ := curl.Get("http://npm.taobao.org/mirrors/node/latest/SHASUMS256.txt")
@@ -56,7 +56,7 @@ if err := ReadLine(res.Body, processFunc); err != nil && err != io.EOF {
 ```
 ![ReadLine](http://i.imgur.com/7kUdIpE.png)
 
-##### 简单（单任务）下载
+##### Simple download
 ```
 newDL, err := curl.New("http://npm.taobao.org/mirrors/node/v0.10.26/node.exe")
 fmt.Printf("curl.New return ld  is %v\n", newDL)
@@ -64,7 +64,7 @@ fmt.Printf("curl.New return err is %v\n", err)
 ```
 ![Simple-download](http://i.imgur.com/bNBJ2kG.png)
 
-##### 多任务下载
+##### Multi download
 ```
 // mode 1
 ts := curl.Task{}
@@ -94,7 +94,7 @@ fmt.Printf("curl.New return err is %v\n", err)
 ```
 ![Multi-download](http://i.imgur.com/BRb7vm1.gif)
 
-##### 自定义下载进度条样式
+##### Custom download process
 ![custom progress schematic](http://i.imgur.com/F5xjerv.jpg)
 ```
 // npm like
@@ -112,12 +112,13 @@ node.exe: 100% █████████████████████�
 ```
 ![custom download progressbar](http://i.imgur.com/qokcgfB.gif)
 
-相关链接
+About
 ---
-* [联系](http://kenshin.wang/) | [邮件](kenshin@ksria.com) | [微博](http://weibo.com/23784148/)
-* [提交问题](https://github.com/kenshin/curl/issues)
+* [CHANGELOG](https://github.com/kenshin/curl/blob/master/CHANGELOG.md)
+* [Contact](http://kenshin.wang/) | [Email](kenshin@ksria.com) | [Twitter](https://twitter.com/wanglei001)
+* [Feedback](https://github.com/kenshin/curl/issues)
 
-更新日志
+CHANGELOG
 ---
 * **2016-03-10, Version `0.0.4` support:**
     * Add multi download.
@@ -136,7 +137,7 @@ node.exe: 100% █████████████████████�
     * Get
     * Readline
 
-授权
+LICENSE
 ---
 [![license-badge]][license-link]
 
